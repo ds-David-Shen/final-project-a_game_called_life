@@ -1,5 +1,5 @@
 import arcade
-
+import time
 # Set how many rows and columns we will have
 ROW_COUNT = 20
 COLUMN_COUNT = 20
@@ -12,12 +12,15 @@ HEIGHT = 20
 # and on the edges of the screen.
 MARGIN = 1
 monkeybox = 150
-# Do the math to figure out oiur screen dimensions
+# Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
 lives = 150
-cash = 2000
+cash = 350
+
+num_of_balloons = 5
+round = 1
 
 grid = []
 
@@ -25,12 +28,18 @@ rowpath = []
 columnpath = []
 monkeyList = []
 monkey_chosen = 0
+
+balloons_on_square = []
+
 def on_update(delta_time):
     pass
+
 
 title = True
 # def titleScreen(title):
 #     pass
+
+
 def on_draw():
     global title
     arcade.start_render()
@@ -282,6 +291,7 @@ def track():
 def on_mouse_press(x, y, button, modifiers):
     global monkeyClicked
     global title
+    global cash
     # Change the x/y screen coordinates to grid coordinates
     column = x // (WIDTH + MARGIN)
     row = y // (HEIGHT + MARGIN)
@@ -297,14 +307,18 @@ def on_mouse_press(x, y, button, modifiers):
         # Flip the location between 1 and 0.
         # if grid[row][column] == 0:
         #     grid[row][column] = 1
-        if grid[row][column] == 0 and monkeyClicked == 0:
+        if grid[row][column] == 0 and monkeyClicked == 0 and cash >=200:
             grid[row][column] = 2
-        elif grid[row][column] == 0 and monkeyClicked == 1:
+            cash -= 200
+        elif grid[row][column] == 0 and monkeyClicked == 1 and cash >= 360:
             grid[row][column] = 3
-        elif grid[row][column] == 0 and monkeyClicked == 2:
+            cash -= 360
+        elif grid[row][column] == 0 and monkeyClicked == 2 and cash >= 350:
             grid[row][column] = 4
-        elif grid[row][column] == 0 and monkeyClicked == 3:
+            cash -= 350
+        elif grid[row][column] == 0 and monkeyClicked == 3 and cash >= 500:
             grid[row][column] = 5
+            cash -= 500
 
     if x>SCREEN_WIDTH - monkeybox + 42 and x < SCREEN_WIDTH - 42:
         # print("in the monkey box")
