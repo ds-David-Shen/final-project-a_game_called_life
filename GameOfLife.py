@@ -20,7 +20,9 @@ lives = 150
 cash = 350
 
 num_of_balloons = 5
-round = 1
+balloons_per_round = 5
+rounds = 1
+round_Happens = False
 
 grid = []
 
@@ -31,9 +33,17 @@ monkey_chosen = 0
 
 balloons_on_square = []
 
-def on_update(delta_time):
-    pass
 
+def on_update(delta_time):
+    global rounds
+    global balloons_per_round
+    global num_of_balloons
+    global round_Happens
+    if balloons_per_round == 0:
+        round_Happens = False
+        rounds += 1
+        num_of_balloons += 5
+        balloons_per_round = num_of_balloons
 
 title = True
 # def titleScreen(title):
@@ -46,6 +56,39 @@ def on_draw():
     # Draw the grid
 
     track()
+    global round_Happens
+    global lives
+    global rounds
+
+    global num_of_balloons
+    global balloons_per_round
+    if round_Happens:
+        if rounds == 1:
+            rounds += 1
+            pass
+        else:
+
+            time.sleep(0.1)
+            checked = [False] * len(rowpath)
+            for i in range(len(rowpath)):
+                x = rowpath[i]
+                y = columnpath[i]
+                if i == 0:
+                    grid[x][y] = 7
+                if i < len(rowpath) - 1:
+                    x1 = rowpath[i + 1]
+                    y1 = columnpath[i + 1]
+                if grid[x][y] == 7 and i != len(rowpath) - 1 and checked[i] == False:
+                    grid[x1][y1] = 7
+                    grid[x][y] = 1
+                    checked[i+1] = True
+                elif grid[x][y] == 7 and i == len(rowpath) - 1 and checked[i] == False:
+                    lives -= 1
+                    balloons_per_round -=1
+                    if lives == 0:
+                        exit()
+
+
     for row in range(ROW_COUNT):
         for column in range(COLUMN_COUNT):
 
@@ -59,6 +102,10 @@ def on_draw():
                 color = arcade.color.GREEN
             elif grid[row][column] == 5:
                 color = arcade.color.YELLOW
+            # elif grid[row][column] == 6:
+            #     color = arcade.color.BLACK
+            elif grid[row][column] == 7:
+                color = arcade.color.PURPLE
             else:
                 color = arcade.color.WHITE
 
@@ -91,7 +138,9 @@ def on_draw():
         arcade.draw_rectangle_outline(x, y, 60,60, arcade.color.BLACK)
 
 def on_key_press(key, modifiers):
-    pass
+    global round_Happens
+    if key == arcade.key.F and round_Happens is False:
+        round_Happens = True
 
 
 def on_key_release(key, modifiers):
@@ -288,7 +337,9 @@ def track():
     # [0, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 5, 4, 3, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 13, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 18, 19]
     # [6, 6, 6, 6, 6, 6, 6, 7, 8, 9, 10, 11, 12, 13, 13, 13, 13, 13, 14, 15, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
+
 def on_mouse_press(x, y, button, modifiers):
+
     global monkeyClicked
     global title
     global cash
@@ -320,7 +371,7 @@ def on_mouse_press(x, y, button, modifiers):
             grid[row][column] = 5
             cash -= 500
 
-    if x>SCREEN_WIDTH - monkeybox + 42 and x < SCREEN_WIDTH - 42:
+    if x > SCREEN_WIDTH - monkeybox + 42 and x < SCREEN_WIDTH - 42:
         # print("in the monkey box")
         monkeyClicked = int(6.1+5/60-(y)/60)
     else:
