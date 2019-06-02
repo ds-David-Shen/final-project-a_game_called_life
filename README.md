@@ -1,1 +1,3 @@
 # Final Project
+
+Hello. The game that we have decided to create this year for our computer science CPT is bloons tower defense. In this game, the main objective is to ensure that the balloons do not get to the other side of the map. In order to do this, monkeys must be placed in order to pop the balloons. The player will start with 150 lives, and the game will continue until the player reaches zero lives. There are many different types of balloons with different movement speeds and can consist of more than one layer. The red balloon moves slowly and only has one layer, whereas other balloons, such as blue, green, and yellow, has even faster movement speeds and has two, three, and four layers respectively. 
