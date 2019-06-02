@@ -14,7 +14,7 @@ HEIGHT = 20
 
 # This sets the margin between each cell
 # and on the edges of the screen.
-MARGIN = 1
+MARGIN = 0#change to 1 when editing code
 monkeybox = 150
 # Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
@@ -46,16 +46,17 @@ def on_update(delta_time):
     global round_Happens
     global lives
     global round_start
+    if title:
+        round_start = time.time()
     if time.time() - round_start > 10 and round_Happens == False and title == False:
-        print(time.time() - round_start)
+        # print(time.time() - round_start)
         round_Happens = True
     if balloons_per_round == 0:
         round_Happens = False
         rounds += 1
-        print(rounds)
+        # print(rounds)
         num_of_balloons += 5
         balloons_per_round = num_of_balloons
-
         round_start = time.time()
     checked = [False] * len(rowpath)
     if round_Happens:
@@ -180,6 +181,7 @@ def on_draw():
         arcade.draw_text("Towers", SCREEN_WIDTH-monkeybox/2-40, SCREEN_HEIGHT-20, arcade.color.BLACK)
         arcade.draw_text("Lives:"+str(lives), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 350, arcade.color.BLACK)
         arcade.draw_text("Cash:"+str(cash), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 380, arcade.color.BLACK)
+        arcade.draw_text("round: "+str(rounds), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK)
         for i in range(4):
             if monkeyList[i] == 0:
                 color = arcade.color.RED
@@ -437,6 +439,7 @@ def on_mouse_press(x, y, button, modifiers):
         monkeyClicked = -1
     if monkeyClicked != -2:
         title = False
+
 
 def setup():
     global grid
