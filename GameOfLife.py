@@ -20,7 +20,7 @@ monkeybox = 150
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
-lives = 150
+lives = 100
 cash = 350
 
 num_of_balloons = 5
@@ -104,9 +104,10 @@ def resizeImage(xpos, ypos, xsize,ysize, image):
 title = True
 def titleScreen():
     #make title screen
-    resizeImage(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, "Images/TitleScreen.png", )
-
-    arcade.draw_text("7",350,150,arcade.color.BLACK,120)
+    # resizeImage(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, "Images/TitleScreen.png", )
+    # arcade.draw_rectangle_filled(370,210, 90, 120, arcade.color.WHITE)
+    # arcade.draw_text("7",350,150,arcade.color.BLACK,120)
+    pass
 
 
 def on_draw():
