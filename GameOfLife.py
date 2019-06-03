@@ -21,7 +21,7 @@ SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
 lives = 100
-cash = 350
+cash = 202
 
 num_of_balloons = 5
 balloons_per_round = 5
@@ -48,47 +48,49 @@ def on_update(delta_time):
     global round_start
     if title:
         round_start = time.time()
-    if time.time() - round_start > 10 and round_Happens == False and title == False:
-        # print(time.time() - round_start)
-        round_Happens = True
-    if balloons_per_round == 0:
-        round_Happens = False
-        rounds += 1
-        # print(rounds)
-        num_of_balloons += 5
-        balloons_per_round = num_of_balloons
-        round_start = time.time()
-    checked = [False] * len(rowpath)
-    if round_Happens:
-        if rounds == 1:
+    else:
+        if time.time() - round_start > 10 and round_Happens == False and title == False:
+            # print(time.time() - round_start)
+            round_Happens = True
+
+        if balloons_per_round == 0:
+            round_Happens = False
             rounds += 1
-            pass
-        else:
+            # print(rounds)
+            num_of_balloons += 5
+            balloons_per_round = num_of_balloons
+            round_start = time.time()
+        checked = [False] * len(rowpath)
+        if round_Happens:
+            if rounds == 1:
+                rounds += 1
+                pass
+            else:
 
-            # time.sleep(1/10)
-            for i in range(len(rowpath)):
-                x = rowpath[i]
-                y = columnpath[i]
-                if i == 0:
-                    grid[x][y] = 7
-                if i < len(rowpath) - 1:
-                    x1 = rowpath[i + 1]
-                    y1 = columnpath[i + 1]
-                if grid[x][y] == 7 and i != len(rowpath) - 1 and checked[i] == False:
-                    if grid[x1][y1] == 6 and grid[x][y] == 7:
+                # time.sleep(1/10)
+                for i in range(len(rowpath)):
+                    x = rowpath[i]
+                    y = columnpath[i]
+                    if i == 0:
+                        grid[x][y] = 7
+                    if i < len(rowpath) - 1:
+                        x1 = rowpath[i + 1]
+                        y1 = columnpath[i + 1]
+                    if grid[x][y] == 7 and i != len(rowpath) - 1 and checked[i] == False:
+                        if grid[x1][y1] == 6 and grid[x][y] == 7:
+                            grid[x][y] = 1
+                            print("hit")
+
+                        grid[x1][y1] = 7
                         grid[x][y] = 1
-                        print("hit")
 
-                    grid[x1][y1] = 7
-                    grid[x][y] = 1
+                        checked[i + 1] = True
 
-                    checked[i + 1] = True
-
-                elif grid[x][y] == 7 and i == len(rowpath) - 1 and checked[i] == False:
-                    lives -= 1
-                    balloons_per_round -=1
-                    if lives == 0:
-                        exit()
+                    elif grid[x][y] == 7 and i == len(rowpath) - 1 and checked[i] == False:
+                        lives -= 1
+                        balloons_per_round -=1
+                        if lives == 0:
+                            exit()
 
 
 
@@ -104,10 +106,9 @@ def resizeImage(xpos, ypos, xsize,ysize, image):
 title = True
 def titleScreen():
     #make title screen
-    # resizeImage(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, "Images/TitleScreen.png", )
-    # arcade.draw_rectangle_filled(370,210, 90, 120, arcade.color.WHITE)
-    # arcade.draw_text("7",350,150,arcade.color.BLACK,120)
-    pass
+    resizeImage(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, "Images/TitleScreen.png", )
+    arcade.draw_rectangle_filled(375,190, 90, 120, arcade.color.WHITE)
+    arcade.draw_text("7",340,140,arcade.color.BLACK,120)
 
 
 def on_draw():
@@ -420,9 +421,12 @@ def on_mouse_press(x, y, button, modifiers):
         # Flip the location between 1 and 0.
         # if grid[row][column] == 0:
         #     grid[row][column] = 1
-        if grid[row][column] == 0 and monkeyClicked == 0 and cash >=200:
-            grid[row][column] = 2
-            cash -= 1
+        if grid[row][column] == 0 and monkeyClicked == 0:
+            if cash<200:
+                print("broke")
+            else:
+                grid[row][column] = 2
+                cash -= 1#change back to 200 later
         elif grid[row][column] == 0 and monkeyClicked == 1 and cash >= 360:
             grid[row][column] = 3
             cash -= 360
@@ -432,6 +436,7 @@ def on_mouse_press(x, y, button, modifiers):
         elif grid[row][column] == 0 and monkeyClicked == 3 and cash >= 500:
             grid[row][column] = 5
             cash -= 500
+
 
     if x > SCREEN_WIDTH - monkeybox + 42 and x < SCREEN_WIDTH - 42:
         # print("in the monkey box")
@@ -445,7 +450,7 @@ def on_mouse_press(x, y, button, modifiers):
 def setup():
     global grid
 
-    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Bloons Tower Defense")
+    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Bloons Tower Defense 7")
     arcade.set_background_color(arcade.color.BLACK)
     arcade.schedule(on_update, 1/60)
 
