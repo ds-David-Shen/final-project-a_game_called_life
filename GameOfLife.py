@@ -38,6 +38,9 @@ monkey_chosen = 0
 
 balloons_on_square = []
 
+def music():
+    #place song here
+    pass
 
 def on_update(delta_time):
     global rounds
@@ -49,6 +52,7 @@ def on_update(delta_time):
     if title:
         round_start = time.time()
     else:
+        music()
         if time.time() - round_start > 10 and round_Happens == False and title == False:
             # print(time.time() - round_start)
             round_Happens = True
@@ -77,8 +81,7 @@ def on_update(delta_time):
                         x1 = rowpath[i + 1]
                         y1 = columnpath[i + 1]
                     if grid[x][y] == 7 and i != len(rowpath) - 1 and checked[i] == False:
-                        if grid[x1][y1] == 6 and grid[x][y] == 7:
-                            grid[x][y] = 1
+                        if grid[x1][y1] == 6:
                             print("hit")
 
                         grid[x1][y1] = 7
@@ -201,7 +204,7 @@ def on_draw():
 def on_key_press(key, modifiers):
     global round_Happens
 
-    if key == arcade.key.F and round_Happens == False:
+    if key == arcade.key.F and round_Happens == False and title == False:
 
         round_Happens = True
 
