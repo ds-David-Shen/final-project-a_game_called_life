@@ -21,7 +21,7 @@ SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
 lives = 100
-cash = 202
+cash = 500
 
 num_of_balloons = 5
 balloons_per_round = 5
