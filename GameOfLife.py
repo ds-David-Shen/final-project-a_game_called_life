@@ -38,9 +38,11 @@ monkey_chosen = 0
 
 balloons_on_square = []
 
+
 def music():
-    #place song here
-    pass
+
+    maintheme = arcade.load_sound("music/maintheme.mp3")
+    arcade.play_sound(maintheme)
 
 def on_update(delta_time):
     global rounds
@@ -52,7 +54,6 @@ def on_update(delta_time):
     if title:
         round_start = time.time()
     else:
-        music()
         if time.time() - round_start > 10 and round_Happens == False and title == False:
             # print(time.time() - round_start)
             round_Happens = True
@@ -456,7 +457,7 @@ def setup():
     arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Bloons Tower Defense 7")
     arcade.set_background_color(arcade.color.BLACK)
     arcade.schedule(on_update, 1/60)
-
+    music()
     # Override arcade window methods
     window = arcade.get_window()
     window.on_draw = on_draw
