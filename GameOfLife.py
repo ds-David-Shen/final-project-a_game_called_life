@@ -20,9 +20,8 @@ monkeybox = 150
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
-lives = 100
+lives = 1
 cash = 500
-
 num_of_balloons = 5
 balloons_per_round = 5
 rounds = 0
@@ -40,9 +39,10 @@ balloons_on_square = []
 
 
 def music():
+    global title
 
-    maintheme = arcade.load_sound("music/maintheme.mp3")
-    arcade.play_sound(maintheme)
+    song = arcade.load_sound("music/maintheme.mp3")
+    arcade.play_sound(song)
 
 def on_update(delta_time):
     global rounds
@@ -51,6 +51,7 @@ def on_update(delta_time):
     global round_Happens
     global lives
     global round_start
+    global endScreen
     if title:
         round_start = time.time()
     else:
@@ -94,7 +95,8 @@ def on_update(delta_time):
                         lives -= 1
                         balloons_per_round -=1
                         if lives == 0:
-                            exit()
+                            endScreen = True
+
 
 
 
@@ -114,93 +116,101 @@ def titleScreen():
     arcade.draw_rectangle_filled(375,190, 90, 120, arcade.color.WHITE)
     arcade.draw_text("7",340,140,arcade.color.BLACK,120)
 
+endScreen = False
+def endTitleScreen():
+    arcade.set_background_color(arcade.color.WHITE)
+    arcade.draw_text("\t\tGame Over :(\n(if you lost lives for no reason - it's a feature)",100,200,arcade.color.BLACK, 15)
 
 def on_draw():
     global title
+    global endScreen
     arcade.start_render()
     if title:
         titleScreen()
     # Draw the grid
     else:
-        track()
-        global round_Happens
-        global lives
-        global rounds
-        global cash
+        if endScreen:
+            endTitleScreen()
+        else:
+            track()
+            global round_Happens
+            global lives
+            global rounds
+            global cash
 
-        on_update(time.sleep(0.1))
+            on_update(time.sleep(0.1))
 
 
-        for row in range(ROW_COUNT):
-            for column in range(COLUMN_COUNT):
-                # print(grid[ROW_COUNT-row-1][column],end="")
-                if grid[row][column] == 1:
-                    color = arcade.color.BEIGE
-                elif grid[row][column] == 7:
-                    color = arcade.color.PURPLE
+            for row in range(ROW_COUNT):
+                for column in range(COLUMN_COUNT):
+                    # print(grid[ROW_COUNT-row-1][column],end="")
+                    if grid[row][column] == 1:
+                        color = arcade.color.BEIGE
+                    elif grid[row][column] == 7:
+                        color = arcade.color.PURPLE
 
-                elif grid[row][column] == 2:
+                    elif grid[row][column] == 2:
+                        color = arcade.color.RED
+                        if grid[row][column+1] == 7:
+                            grid[row][column+1] = 6
+                            cash += 1
+                        elif grid[row][column-1] == 7:
+                            grid[row][column-1] = 6
+                            cash += 1
+                        elif grid[row+1][column] == 7:
+                            grid[row+1][column] = 6
+                            cash += 1
+                        elif grid[row-1][column] == 7:
+                            grid[row-1][column] = 6
+                            cash += 1
+
+
+
+                    elif grid[row][column] == 3:
+                        color = arcade.color.BLUE
+                    elif grid[row][column] == 4:
+                        color = arcade.color.GREEN
+                    elif grid[row][column] == 5:
+                        color = arcade.color.YELLOW
+                    elif grid[row][column] == 6:
+                        color = arcade.color.BLACK
+                        grid[row][column] = 0
+
+                    else:
+                        color = arcade.color.WHITE
+
+                    # Do the math to figure out where the box is
+                    x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
+                    y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
+
+                    # Draw the box
+                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
+            #     print()
+            # print()
+
+            monkeybox_outline = 2
+            arcade.draw_rectangle_filled(SCREEN_WIDTH-monkeybox/2, SCREEN_HEIGHT/2, monkeybox, SCREEN_HEIGHT,
+                                         arcade.color.BEIGE)
+            arcade.draw_rectangle_outline(SCREEN_WIDTH - monkeybox / 2, SCREEN_HEIGHT / 2, monkeybox - monkeybox_outline,
+                                          SCREEN_HEIGHT - monkeybox_outline,
+                                         arcade.color.BLACK)
+            arcade.draw_text("Towers", SCREEN_WIDTH-monkeybox/2-40, SCREEN_HEIGHT-20, arcade.color.BLACK)
+            arcade.draw_text("Lives:"+str(lives), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 350, arcade.color.BLACK)
+            arcade.draw_text("Cash:"+str(cash), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 380, arcade.color.BLACK)
+            arcade.draw_text("round: "+str(rounds), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK)
+            for i in range(4):
+                if monkeyList[i] == 0:
                     color = arcade.color.RED
-                    if grid[row][column+1] == 7:
-                        grid[row][column+1] = 6
-                        cash += 1
-                    elif grid[row][column-1] == 7:
-                        grid[row][column-1] = 6
-                        cash += 1
-                    elif grid[row+1][column] == 7:
-                        grid[row+1][column] = 6
-                        cash += 1
-                    elif grid[row-1][column] == 7:
-                        grid[row-1][column] = 6
-                        cash += 1
-
-
-
-                elif grid[row][column] == 3:
+                elif monkeyList[i] == 1:
                     color = arcade.color.BLUE
-                elif grid[row][column] == 4:
+                elif monkeyList[i] == 2:
                     color = arcade.color.GREEN
-                elif grid[row][column] == 5:
-                    color = arcade.color.YELLOW
-                elif grid[row][column] == 6:
-                    color = arcade.color.BLACK
-                    grid[row][column] = 0
-
                 else:
-                    color = arcade.color.WHITE
-
-                # Do the math to figure out where the box is
-                x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
-                y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
-
-                # Draw the box
-                arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
-        #     print()
-        # print()
-
-        monkeybox_outline = 2
-        arcade.draw_rectangle_filled(SCREEN_WIDTH-monkeybox/2, SCREEN_HEIGHT/2, monkeybox, SCREEN_HEIGHT,
-                                     arcade.color.BEIGE)
-        arcade.draw_rectangle_outline(SCREEN_WIDTH - monkeybox / 2, SCREEN_HEIGHT / 2, monkeybox - monkeybox_outline,
-                                      SCREEN_HEIGHT - monkeybox_outline,
-                                     arcade.color.BLACK)
-        arcade.draw_text("Towers", SCREEN_WIDTH-monkeybox/2-40, SCREEN_HEIGHT-20, arcade.color.BLACK)
-        arcade.draw_text("Lives:"+str(lives), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 350, arcade.color.BLACK)
-        arcade.draw_text("Cash:"+str(cash), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 380, arcade.color.BLACK)
-        arcade.draw_text("round: "+str(rounds), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK)
-        for i in range(4):
-            if monkeyList[i] == 0:
-                color = arcade.color.RED
-            elif monkeyList[i] == 1:
-                color = arcade.color.BLUE
-            elif monkeyList[i] == 2:
-                color = arcade.color.GREEN
-            else:
-                color = arcade.color.YELLOW
-            x = SCREEN_WIDTH-monkeybox/2
-            y = SCREEN_HEIGHT- 80 - 60*i
-            arcade.draw_rectangle_filled(x, y, 60, 60, color)
-            arcade.draw_rectangle_outline(x, y, 60,60, arcade.color.BLACK)
+                    color = arcade.color.YELLOW
+                x = SCREEN_WIDTH-monkeybox/2
+                y = SCREEN_HEIGHT- 80 - 60*i
+                arcade.draw_rectangle_filled(x, y, 60, 60, color)
+                arcade.draw_rectangle_outline(x, y, 60,60, arcade.color.BLACK)
 
 def on_key_press(key, modifiers):
     global round_Happens
