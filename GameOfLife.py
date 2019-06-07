@@ -4,6 +4,8 @@ import os
 from PIL import Image
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
+#set font to bloons td font
+font ="OETZTYPE"
 # Set how many rows and columns we will have
 ROW_COUNT = 20
 COLUMN_COUNT = 20
@@ -61,14 +63,13 @@ def on_update(delta_time):
 
         if balloons_per_round == 0:
             round_Happens = False
-            rounds += 1
             # print(rounds)
             num_of_balloons += 5
             balloons_per_round = num_of_balloons
             round_start = time.time()
         checked = [False] * len(rowpath)
         if round_Happens:
-            if rounds == 1:
+            if rounds == 0:
                 rounds += 1
                 pass
             else:
@@ -82,7 +83,7 @@ def on_update(delta_time):
                     if i < len(rowpath) - 1:
                         x1 = rowpath[i + 1]
                         y1 = columnpath[i + 1]
-                    if grid[x][y] == 7 and i != len(rowpath) - 1 and checked[i] == False:
+                    if grid[x][y] == 7 and checked[i] == False and i<len(rowpath)-1:
                         if grid[x1][y1] == 6:
                             print("hit")
 
@@ -91,13 +92,11 @@ def on_update(delta_time):
 
                         checked[i + 1] = True
 
-                    elif grid[x][y] == 7 and i == len(rowpath) - 1 and checked[i] == False:
+                    if grid[x][y] >= 7 and i == len(rowpath) - 1 and checked[i - 1] == True:
                         lives -= 1
-                        balloons_per_round -=1
+                        balloons_per_round -= 1
                         if lives == 0:
                             endScreen = True
-
-
 
 
 #create function for resizing image using pil(keeps it higher resolution)
@@ -110,21 +109,37 @@ def resizeImage(xpos, ypos, xsize,ysize, image):
     arcade.draw_texture_rectangle(xpos, ypos, xsize, ysize, image)
 
 title = True
+
+
 def titleScreen():
+    global font
     #make title screen
     resizeImage(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, "Images/TitleScreen.png", )
     arcade.draw_rectangle_filled(375,190, 90, 120, arcade.color.WHITE)
-    arcade.draw_text("7",340,140,arcade.color.BLACK,120)
+    arcade.draw_text("7",340,140,arcade.color.BLACK,120, font_name = font)
+
 
 endScreen = False
+
+
 def endTitleScreen():
+    global font
+    global rounds
     arcade.set_background_color(arcade.color.WHITE)
-    arcade.draw_text("\t\tGame Over :(\n(if you lost lives for no reason - it's a feature)",100,200,arcade.color.BLACK, 15)
+    arcade.draw_text("Game Over",180,220,arcade.color.RED, 24, font_name = font)
+    arcade.draw_text("You ran out of lives\n    on round "+str(rounds),170,200,arcade.color.BLACK, 15, font_name = font)
+
 
 def on_draw():
     global title
     global endScreen
+    global round_Happens
+    global lives
+    global rounds
+    global cash
+    global font
     arcade.start_render()
+
     if title:
         titleScreen()
     # Draw the grid
@@ -133,13 +148,7 @@ def on_draw():
             endTitleScreen()
         else:
             track()
-            global round_Happens
-            global lives
-            global rounds
-            global cash
-
             on_update(time.sleep(0.1))
-
 
             for row in range(ROW_COUNT):
                 for column in range(COLUMN_COUNT):
@@ -194,10 +203,10 @@ def on_draw():
             arcade.draw_rectangle_outline(SCREEN_WIDTH - monkeybox / 2, SCREEN_HEIGHT / 2, monkeybox - monkeybox_outline,
                                           SCREEN_HEIGHT - monkeybox_outline,
                                          arcade.color.BLACK)
-            arcade.draw_text("Towers", SCREEN_WIDTH-monkeybox/2-40, SCREEN_HEIGHT-20, arcade.color.BLACK)
-            arcade.draw_text("Lives:"+str(lives), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 350, arcade.color.BLACK)
-            arcade.draw_text("Cash:"+str(cash), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 380, arcade.color.BLACK)
-            arcade.draw_text("round: "+str(rounds), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK)
+            arcade.draw_text("Towers", SCREEN_WIDTH-monkeybox/2-40, SCREEN_HEIGHT-20, arcade.color.BLACK, font_name = font)
+            arcade.draw_text("Lives:"+str(lives), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 350, arcade.color.BLACK, font_name = font)
+            arcade.draw_text("Cash:"+str(cash), SCREEN_WIDTH - monkeybox / 2 - 40, SCREEN_HEIGHT - 380, arcade.color.BLACK, font_name = font)
+            arcade.draw_text("round: "+str(rounds), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK, font_name = font)
             for i in range(4):
                 if monkeyList[i] == 0:
                     color = arcade.color.RED
@@ -212,11 +221,12 @@ def on_draw():
                 arcade.draw_rectangle_filled(x, y, 60, 60, color)
                 arcade.draw_rectangle_outline(x, y, 60,60, arcade.color.BLACK)
 
+
 def on_key_press(key, modifiers):
     global round_Happens
-
+    global rounds
     if key == arcade.key.F and round_Happens == False and title == False:
-
+        rounds += 1
         round_Happens = True
 
 
@@ -467,7 +477,6 @@ def setup():
     arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Bloons Tower Defense 7")
     arcade.set_background_color(arcade.color.BLACK)
     arcade.schedule(on_update, 1/60)
-    music()
     # Override arcade window methods
     window = arcade.get_window()
     window.on_draw = on_draw
@@ -475,6 +484,8 @@ def setup():
     window.on_key_release = on_key_release
     window.on_mouse_press = on_mouse_press
 
+
+    music()
     # array is simply a list of lists.
     for row in range(ROW_COUNT):
         # Add an empty array that will hold each cell
