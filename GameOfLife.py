@@ -4,8 +4,11 @@ import os
 from PIL import Image
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
-#set font to bloons td font
+
+
+# set font to bloons td font
 font ="OETZTYPE"
+
 # Set how many rows and columns we will have
 ROW_COUNT = 20
 COLUMN_COUNT = 20
@@ -16,13 +19,13 @@ HEIGHT = 20
 
 # This sets the margin between each cell
 # and on the edges of the screen.
-MARGIN = 0#change to 1 when editing code
+MARGIN = 0 #change to 1 when editing code
 monkeybox = 150
 # Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN + monkeybox
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
-lives = 1
+lives = 5
 cash = 500
 num_of_balloons = 5
 balloons_per_round = 5
@@ -75,28 +78,29 @@ def on_update(delta_time):
             else:
 
                 # time.sleep(1/10)
-                for i in range(len(rowpath)):
-                    x = rowpath[i]
-                    y = columnpath[i]
-                    if i == 0:
-                        grid[x][y] = 7
-                    if i < len(rowpath) - 1:
-                        x1 = rowpath[i + 1]
-                        y1 = columnpath[i + 1]
-                    if grid[x][y] == 7 and checked[i] == False and i<len(rowpath)-1:
-                        if grid[x1][y1] == 6:
-                            print("hit")
+                if True == True: # fix where the ballooons starts here
+                    for i in range(len(rowpath)):
+                        x = rowpath[i]
+                        y = columnpath[i]
+                        if i == 0:
+                            grid[x][y] = 7
+                        if i < len(rowpath) - 1:
+                            x1 = rowpath[i + 1]
+                            y1 = columnpath[i + 1]
+                        if grid[x][y] == 7 and checked[i] == False and i<len(rowpath)-1:
+                            if grid[x1][y1] == 6:
+                                print("hit")
 
-                        grid[x1][y1] = 7
-                        grid[x][y] = 1
+                            grid[x1][y1] = 7
+                            grid[x][y] = 1
 
-                        checked[i + 1] = True
+                            checked[i + 1] = True
 
-                    if grid[x][y] >= 7 and i == len(rowpath) - 1 and checked[i - 1] == True:
-                        lives -= 1
-                        balloons_per_round -= 1
-                        if lives == 0:
-                            endScreen = True
+                        if grid[x][y] >= 7 and i == len(rowpath) - 1 and checked[i - 1] == True:
+                            lives -= 1
+                            balloons_per_round -= 1
+                            if lives == 0:
+                                endScreen = True
 
 
 #create function for resizing image using pil(keeps it higher resolution)
@@ -152,6 +156,7 @@ def on_draw():
 
             for row in range(ROW_COUNT):
                 for column in range(COLUMN_COUNT):
+                    # print(grid[ROW_COUNT-row-1][column],end="")
                     # print(grid[ROW_COUNT-row-1][column],end="")
                     if grid[row][column] == 1:
                         color = arcade.color.BEIGE
@@ -446,11 +451,10 @@ def on_mouse_press(x, y, button, modifiers):
         # if grid[row][column] == 0:
         #     grid[row][column] = 1
         if grid[row][column] == 0 and monkeyClicked == 0:
-            if cash<200:
-                print("broke")
-            else:
-                grid[row][column] = 2
-                cash -= 1#change back to 200 later
+
+
+            grid[row][column] = 2
+            cash -= 1 # change back to 200 later
         elif grid[row][column] == 0 and monkeyClicked == 1 and cash >= 360:
             grid[row][column] = 3
             cash -= 360
