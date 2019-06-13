@@ -62,6 +62,7 @@ def on_update(delta_time):
     else:
         if time.time() - round_start > 10 and round_Happens == False and title == False:
             # print(time.time() - round_start)
+            round_start = time.time()
             round_Happens = True
 
         if balloons_per_round == 0:
@@ -70,39 +71,36 @@ def on_update(delta_time):
             num_of_balloons += 5
             balloons_per_round = num_of_balloons
             round_start = time.time()
-        checked = [False] * len(rowpath)
+
+
+
         if round_Happens:
-            if rounds == 0:
-                rounds += 1
-                pass
-            else:
 
-                # time.sleep(1/10)
-                if True == True: # fix where the ballooons starts here
-                    for i in range(len(rowpath)):
-                        x = rowpath[i]
-                        y = columnpath[i]
-                        if i == 0:
-                            grid[x][y] = 7
-                        if i < len(rowpath) - 1:
-                            x1 = rowpath[i + 1]
-                            y1 = columnpath[i + 1]
-                        if grid[x][y] == 7 and checked[i] == False and i<len(rowpath)-1:
-                            if grid[x1][y1] == 6:
-                                print("hit")
+            print("round is happening")
+            checked = [False] * len(rowpath)
+            # time.sleep(1/10)
+            for i in range(len(rowpath)):
+                x = rowpath[i]
+                y = columnpath[i]
+                if i == 0:
+                    grid[x][y] = 7
+                if i < len(rowpath) - 1:
+                    x1 = rowpath[i + 1]
+                    y1 = columnpath[i + 1]
+                if grid[x][y] == 7 and checked[i] is False and i < len(rowpath) - 1:
+                    if grid[x1][y1] == 6:
+                        print("hit")
 
-                            grid[x1][y1] = 7
-                            grid[x][y] = 1
+                    grid[x1][y1] = 7
+                    grid[x][y] = 1
 
-                            checked[i + 1] = True
+                    checked[i + 1] = True
 
-                        if grid[x][y] >= 7 and i == len(rowpath) - 1 and checked[i - 1] == True:
-                            lives -= 1
-                            balloons_per_round -= 1
-                            if lives == 0:
-                                endScreen = True
-
-
+                if grid[x][y] >= 7 and i == len(rowpath) - 1 and checked[i - 1] is True:
+                    lives -= 1
+                    balloons_per_round -= 1
+                    if lives == 0:
+                        endScreen = True
 #create function for resizing image using pil(keeps it higher resolution)
 def resizeImage(xpos, ypos, xsize,ysize, image):
     size = xsize,ysize
@@ -142,6 +140,7 @@ def on_draw():
     global rounds
     global cash
     global font
+    global round_start
     arcade.start_render()
 
     if title:
@@ -230,9 +229,11 @@ def on_draw():
 def on_key_press(key, modifiers):
     global round_Happens
     global rounds
+    global round_start
     if key == arcade.key.F and round_Happens == False and title == False:
         rounds += 1
         round_Happens = True
+        round_start = time.time()
 
 
 def on_key_release(key, modifiers):
