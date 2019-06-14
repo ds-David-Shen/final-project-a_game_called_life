@@ -138,11 +138,25 @@ def on_draw():
 
         arcade.draw_text("Score: "+str(score), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK,18)
 
-
+konamicode = ['u','u','d','d','l','r','l','r','b','a']
+secret = []
 def on_key_press(key, modifiers):
-    global direction, title
-
-    if title == True:
+    global direction, title, konamicode, secret
+    if(key == arcade.key.UP):
+        secret.append('u')
+    if (key == arcade.key.DOWN):
+        secret.append('d')
+    if (key == arcade.key.LEFT):
+        secret.append('l')
+    if (key == arcade.key.RIGHT):
+        secret.append('r')
+    if (key == arcade.key.B):
+        secret.append('b')
+    if (key == arcade.key.A):
+        secret.append('a')
+    if(konamicode == secret):
+        print("secret")
+    if title == True and (key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D):
         direction = 3
         title = False
     if key == arcade.key.W and direction != 0 and direction != 2:
