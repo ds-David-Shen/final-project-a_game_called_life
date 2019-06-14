@@ -145,16 +145,16 @@ def on_key_press(key, modifiers):
     if title == True:
         direction = 3
         title = False
-    if key == arcade.key.W and direction != 0:
+    if key == arcade.key.W and direction != 0 and direction != 2:
         direction = 1
 
-    if key == arcade.key.S and direction != 0:
+    if key == arcade.key.S and direction != 0 and direction != 1:
         direction = 2
 
-    if key == arcade.key.D and direction != 0:
+    if key == arcade.key.D and direction != 0 and direction != 4:
         direction = 3
 
-    if key == arcade.key.A and direction != 0:
+    if key == arcade.key.A and direction != 0 and direction != 3:
         direction = 4
 
 
