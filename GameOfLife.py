@@ -75,8 +75,7 @@ def on_update(delta_time):
 
 
         if round_Happens:
-
-            print("round is happening")
+            # print("round is happening")
             checked = [False] * len(rowpath)
             # time.sleep(1/10)
             for i in range(len(rowpath)):
@@ -90,9 +89,10 @@ def on_update(delta_time):
                 if grid[x][y] == 7 and checked[i] is False and i < len(rowpath) - 1:
                     if grid[x1][y1] == 6:
                         print("hit")
-
-                    grid[x1][y1] = 7
-                    grid[x][y] = 1
+                        #pop balloon here
+                    else:
+                        grid[x1][y1] = 7
+                        grid[x][y] = 1
 
                     checked[i + 1] = True
 
