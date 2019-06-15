@@ -73,7 +73,7 @@ def title_screen():
 def end_Screen():
     global grid, direction
     arcade.set_background_color(arcade.color.WHITE)
-    arcade.draw_text("Game over",SCREEN_WIDTH/2 - 150,SCREEN_HEIGHT/2, arcade.color.BLACK,50)
+    arcade.draw_text("Game over. Your score is " + str(score),SCREEN_WIDTH/2 - 150,SCREEN_HEIGHT/2, arcade.color.BLACK,25)
     direction = 0
 
 # update function
@@ -242,7 +242,7 @@ def on_key_press(key, modifiers):
 
 def setup():
     global grid, fps
-    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "SnakeAttempt")
+    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake")
     arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
     arcade.schedule(on_update, 1 / fps)
     # Override arcade window methods
