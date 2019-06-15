@@ -44,9 +44,9 @@ theme = "music/maintheme.mp3"
 rsnake = []
 csnake = []
 
-# set position of fruit
-fruit_xPos = random.randint(0, COLUMN_COUNT - 2)
-fruit_yPos = random.randint(0, ROW_COUNT - 2)
+# set position of bug
+bug_xPos = random.randint(0, COLUMN_COUNT - 2)
+bug_yPos = random.randint(0, ROW_COUNT - 2)
 
 # Do the math to figure out screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -56,9 +56,9 @@ SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 grid = []
 
 # create music function for songs
-def music(song):
-    play_song = arcade.load_sound(song)
-    arcade.play_sound(play_song)
+def sound(sound):
+    play_sound = arcade.load_sound(sound)
+    arcade.play_sound(play_sound)
 
 
 # create title screen
@@ -66,28 +66,25 @@ def title_screen():
     texture = arcade.load_texture("Images/snake-title-screen.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
-    arcade.draw_text("press WASD keys\nto start\npress c for how to play", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25)
-
-
+    arcade.draw_text("press A to start\npress C for how to play", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
 
 # create end screen
 def end_Screen():
     global grid, direction, score
     arcade.set_background_color(arcade.color.WHITE)
-    arcade.draw_text("Game over", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, arcade.color.BLACK,50)
-    arcade.draw_text("Your score is " + str(score)+"\npress any key to play again", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2, arcade.color.BLACK,25)
+    arcade.draw_text("Game over", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, arcade.color.BLACK,50, font_name= "TIMES NEW ROMAN")
+    arcade.draw_text("Your score is " + str(score)+"\n  press any key\n to play again", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2, arcade.color.BLACK,25, font_name = "TIMES NEW ROMAN")
     direction = 0
 
 # create how to play screen
 def how_to_play_screen():
-    arcade.set_background_color(arcade.color.PURPLE)
-    arcade.draw_text("Use WASD keys\n to move", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, arcade.color.BLACK,50)
-    arcade.draw_text("press WASD keys\nto start", SCREEN_WIDTH / 2 - 150,
-                     SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25)
+    arcade.set_background_color(arcade.color.BLACK)
+    arcade.draw_text("Use WASD keys\n to move", SCREEN_WIDTH/2 - 180, SCREEN_HEIGHT/2 + 100, arcade.color.WHITE, 50, font_name= "TIMES NEW ROMAN")
+    arcade.draw_text("press A to start", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
 
 # update function
 def on_update(delta_time):
-    global fruit_xPos, fruit_yPos, score, high_score, direction, play_screen, game_over
+    global bug_xPos, bug_yPos, score, high_score, direction, play_screen, game_over
 
     # set direction
     if direction == 1:
@@ -99,13 +96,13 @@ def on_update(delta_time):
     if direction == 4:
         csnake[len(csnake)-1] -= 1
 
-    # increase score when fruit is reached, move fruit to new location
+    # increase score when bug is reached, move bug to new location
     if grid[rsnake[len(rsnake)-1]][csnake[len(csnake)-1]] == 2:
         score += 1
         rsnake.append(rsnake[len(rsnake)-1])
         csnake.append(csnake[len(csnake)-1])
-        fruit_xPos = random.randint(0,COLUMN_COUNT - 1)
-        fruit_yPos = random.randint(0,ROW_COUNT - 1)
+        bug_xPos = random.randint(0,COLUMN_COUNT - 1)
+        bug_yPos = random.randint(0,ROW_COUNT - 1)
         arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
 
     # snake movement
@@ -139,18 +136,14 @@ def on_update(delta_time):
             game_over = True
             high_score = score
 
-
-
-# create fruit function
-def fruit():
-    global grid, fruit_xPos, fruit_yPos
-    # make sure fruit does not spawn in body of snake
-    while grid[fruit_yPos][fruit_xPos] == 1:
-        fruit_xPos = random.randint(0, COLUMN_COUNT - 2)
-        fruit_yPos = random.randint(0, ROW_COUNT - 2)
-    grid[fruit_yPos][fruit_xPos] = 2
-
-
+# create bug function
+def bug():
+    global grid, bug_xPos, bug_yPos
+    # make sure bug does not spawn in body of snake
+    while grid[bug_yPos][bug_xPos] == 1:
+        bug_xPos = random.randint(0, COLUMN_COUNT - 2)
+        bug_yPos = random.randint(0, ROW_COUNT - 2)
+    grid[bug_yPos][bug_xPos] = 2
 
 
 # create draw function
@@ -158,7 +151,7 @@ def on_draw():
     global score, direction, game_over, how_to_play, song_chosen, play_screen
     arcade.start_render()
 
-    # see which screen to draw based on booleans
+    # see which screen to draw
     if title:
         title_screen()
     elif game_over:
@@ -168,10 +161,10 @@ def on_draw():
     else:
         # after the title screen, play song
         if song_chosen == False:
-            music(theme)
+            sound(theme)
             song_chosen = True
 
-        fruit()
+        bug()
 
         # Draw the grid
         for row in range(ROW_COUNT):
@@ -201,7 +194,14 @@ def on_draw():
                                                   HEIGHT, texture, 0)
 
             # draw score
-            arcade.draw_text("Score: "+str(score)+"\nHigh Score: "+str(high_score), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK,18)
+            arcade.draw_text("Score: "+str(score), 20, SCREEN_HEIGHT - 60, arcade.color.BLACK,18, font_name= "COMIC SANS MS")
+            arcade.draw_text(str(high_score), 90, SCREEN_HEIGHT - 100,
+                             arcade.color.BLACK, 18, font_name= "COMIC SANS MS")
+            trophy = arcade.load_texture("Images/trophy.png")
+            scale = 0.4
+            arcade.draw_texture_rectangle(60, SCREEN_HEIGHT - 100, trophy.width * scale,
+                                          trophy.height * scale, trophy, 0)
+
 
 
 # create secret code
@@ -227,12 +227,13 @@ def on_key_press(key, modifiers):
             secret.append('a')
 
         # if the player does certain inputs in the beginning of the game,
-        # play secret theme
+        # play secret theme and double speed
         if konamicode == secret:
             theme = "music/Motteke! Sailor Fuku! - Lucky Star Full Opening.mp3"
-
+            fps = 10
+            schedule(fps)
         # set direction based off key press, create a delay in the key presses
-        if key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D:
+        if key == arcade.key.A:
             direction = 3
             title = False
             play_screen = True
@@ -241,11 +242,11 @@ def on_key_press(key, modifiers):
         if key == arcade.key.C:
             title = False
             how_to_play = True
-            print("hi")
 
-    if how_to_play and key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D:
+    if how_to_play and key == arcade.key.A:
         how_to_play = False
         play_screen = True
+        direction = 3
 
     # make it so the player can restart after they die
     if game_over == True:
@@ -264,26 +265,30 @@ def on_key_press(key, modifiers):
         direction = 3
         score = 0
 
-    if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/100:
-        direction = 1
-        key_press_delay = time.time()
-    if key == arcade.key.S and direction != 0 and direction != 1 and time.time() - key_press_delay > 1/fps - fps/100:
-        direction = 2
-        key_press_delay = time.time()
+    if play_screen:
+        if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/100:
+            direction = 1
+            key_press_delay = time.time()
+        if key == arcade.key.S and direction != 0 and direction != 1 and time.time() - key_press_delay > 1/fps - fps/100:
+            direction = 2
+            key_press_delay = time.time()
 
-    if key == arcade.key.D and direction != 0 and direction != 4 and time.time() - key_press_delay > 1/fps - fps/100:
-        direction = 3
-        key_press_delay = time.time()
+        if key == arcade.key.D and direction != 0 and direction != 4 and time.time() - key_press_delay > 1/fps - fps/100:
+            direction = 3
+            key_press_delay = time.time()
 
-    if key == arcade.key.A and direction != 0 and direction != 3 and time.time() - key_press_delay > 1/fps - fps/100:
-        direction = 4
-        key_press_delay = time.time()
+        if key == arcade.key.A and direction != 0 and direction != 3 and time.time() - key_press_delay > 1/fps - fps/100:
+            direction = 4
+            key_press_delay = time.time()
 
+
+def schedule(fps):
+    arcade.schedule(on_update, 1 / fps)
 
 def setup():
     global grid, fps
     arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake")
-    arcade.schedule(on_update, 1 / fps)
+    schedule(fps)
     # Override arcade window methods
     window = arcade.get_window()
     window.on_draw = on_draw
