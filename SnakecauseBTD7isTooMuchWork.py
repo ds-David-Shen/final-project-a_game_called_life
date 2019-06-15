@@ -14,15 +14,19 @@ HEIGHT = 30
 
 # This sets the margin between each cell
 # and on the edges of the screen.
-MARGIN = 1
+MARGIN = 0
 
+# set scores
 score = 0
+high_score = 0
 
 direction = 5
 
 # set if screen is chosen
 title = True
+play_screen = False
 game_over = False
+how_to_play = False
 
 # set frame rate
 fps = 5
@@ -36,16 +40,13 @@ song_chosen = False
 # default theme of music
 theme = "music/maintheme.mp3"
 
-# create body of snake
+# create two lists to store x and y coordinates of the snake
 rsnake = []
 csnake = []
-rsnake.append(4)
-rsnake.append(4)
-rsnake.append(4)
-csnake.append(6)
-csnake.append(6)
-csnake.append(6)
 
+# set position of fruit
+fruit_xPos = random.randint(0, COLUMN_COUNT - 2)
+fruit_yPos = random.randint(0, ROW_COUNT - 2)
 
 # Do the math to figure out screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -62,23 +63,31 @@ def music(song):
 
 # create title screen
 def title_screen():
-    time.sleep(0.5)
-    arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
-    arcade.draw_text("SnEk", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2, arcade.color.BLACK, 50)
-    arcade.draw_text("press WASD keys\nto play", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 100, arcade.color.BLACK, 20)
-    arcade.draw_text("WASD keys to move", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.BLACK, 20)
+    texture = arcade.load_texture("Images/snake-title-screen.png")
+    arcade.draw_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH,
+                                  SCREEN_HEIGHT, texture, 0)
+    arcade.draw_text("press WASD keys\nto start\npress c for how to play", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25)
+
 
 
 # create end screen
 def end_Screen():
-    global grid, direction
+    global grid, direction, score
     arcade.set_background_color(arcade.color.WHITE)
-    arcade.draw_text("Game over. Your score is " + str(score),SCREEN_WIDTH/2 - 150,SCREEN_HEIGHT/2, arcade.color.BLACK,25)
+    arcade.draw_text("Game over", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, arcade.color.BLACK,50)
+    arcade.draw_text("Your score is " + str(score)+"\npress any key to play again", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2, arcade.color.BLACK,25)
     direction = 0
+
+# create how to play screen
+def how_to_play_screen():
+    arcade.set_background_color(arcade.color.PURPLE)
+    arcade.draw_text("Use WASD keys\n to move", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, arcade.color.BLACK,50)
+    arcade.draw_text("press WASD keys\nto start", SCREEN_WIDTH / 2 - 150,
+                     SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25)
 
 # update function
 def on_update(delta_time):
-    global fruit_xPos, fruit_yPos, score, direction, game_over
+    global fruit_xPos, fruit_yPos, score, high_score, direction, play_screen, game_over
 
     # set direction
     if direction == 1:
@@ -100,7 +109,7 @@ def on_update(delta_time):
         arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
 
     # snake movement
-    if title == False and game_over == False:
+    if play_screen:
         for i in range(len(rsnake)- 1):
             rsnake[i] = rsnake[i+1]
             csnake[i] = csnake[i+1]
@@ -112,6 +121,7 @@ def on_update(delta_time):
                 for j in range(i - 1):
                     if rsnake[j] == rsnake[i] and csnake[j] == csnake[i]:
                         game_over = True
+                        high_score = score
 
                 # head of snake
                 if i == len(rsnake) - 2:
@@ -121,10 +131,14 @@ def on_update(delta_time):
                 else:
                     grid[rsnake[i]][csnake[i]] = 1
 
+        # game over if snake hits the  boundaries
+        if rsnake[len(rsnake)-1] > ROW_COUNT - 1 or rsnake[len(rsnake)-1] < 0 or csnake[len(rsnake)-1] > COLUMN_COUNT - 1 or csnake[len(rsnake)-1] < 0:
+            end_Screen()
+            play_screen = False
+            direction = 0
+            game_over = True
+            high_score = score
 
-# set position of fruit
-fruit_xPos = random.randint(0, COLUMN_COUNT - 2)
-fruit_yPos = random.randint(0, ROW_COUNT - 2)
 
 
 # create fruit function
@@ -137,11 +151,11 @@ def fruit():
     grid[fruit_yPos][fruit_xPos] = 2
 
 
-texture = arcade.load_texture("Images/chibi-miku.png")
+
 
 # create draw function
 def on_draw():
-    global score, direction, game_over, song_chosen
+    global score, direction, game_over, how_to_play, song_chosen, play_screen
     arcade.start_render()
 
     # see which screen to draw based on booleans
@@ -149,47 +163,45 @@ def on_draw():
         title_screen()
     elif game_over:
         end_Screen()
+    elif how_to_play:
+        how_to_play_screen()
     else:
         # after the title screen, play song
         if song_chosen == False:
             music(theme)
             song_chosen = True
 
-        # game over if snake hits the  boundaries
-        if rsnake[len(rsnake)-1] > ROW_COUNT - 1 or rsnake[len(rsnake)-1] < 0 or csnake[len(rsnake)-1] > COLUMN_COUNT - 1 or csnake[len(rsnake)-1] < 0:
-            end_Screen()
-            direction = 0
-            game_over = True
-
         fruit()
-        if game_over:
-            pass
-        else:
-            # Draw the grid
-            for row in range(ROW_COUNT):
-                for column in range(COLUMN_COUNT):
-                    # Figure out what color to draw the box
-                    if grid[row][column] == 1:
-                        color = arcade.color.GREEN
-                    elif grid[row][column] == 2:
-                        color = arcade.color.RED
-                    else:
-                        color = arcade.color.WHITE
 
-                    # Do the math to figure out where the box is
-                    x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
-                    y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
+        # Draw the grid
+        for row in range(ROW_COUNT):
+            for column in range(COLUMN_COUNT):
+                # Figure out what color to draw the box
 
-                    # Draw the box
-                    if grid[row][column] != 3:
-                        arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
-                    else:
-                        arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                      HEIGHT, texture, 0)
-                    if grid[row][column] != 0:
-                        arcade.draw_rectangle_outline(x, y, WIDTH, HEIGHT, arcade.color.WHITE, 3)
-        # draw score
-        arcade.draw_text("Score: "+str(score), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK,18)
+                # Do the math to figure out where the box is
+                x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
+                y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
+
+                if grid[row][column] == 1:
+                    color = arcade.color.GREEN
+                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
+                    color = arcade.color.WHITE
+                    arcade.draw_rectangle_outline(x, y, WIDTH, HEIGHT, color, 3)
+                elif grid[row][column] == 2:
+                    texture = arcade.load_texture("Images/bug.png")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
+                elif grid[row][column] == 3:
+                    texture = arcade.load_texture("Images/chibi-miku.png")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
+                else:
+                    texture = arcade.load_texture("Images/grassBlock.png")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
+
+            # draw score
+            arcade.draw_text("Score: "+str(score)+"\nHigh Score: "+str(high_score), 20, SCREEN_HEIGHT - 20, arcade.color.BLACK,18)
 
 
 # create secret code
@@ -198,7 +210,7 @@ secret = []
 
 
 def on_key_press(key, modifiers):
-    global direction, title, konamicode, secret, key_press_delay, fps, theme
+    global direction, title, play_screen, game_over, how_to_play, konamicode, secret, key_press_delay, fps, theme, score
 
     if title == True:
         if key == arcade.key.UP:
@@ -219,11 +231,39 @@ def on_key_press(key, modifiers):
         if konamicode == secret:
             theme = "music/Motteke! Sailor Fuku! - Lucky Star Full Opening.mp3"
 
-    # set direction based off key press, create a delay in the key presses
-    if title == True and (key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D):
+        # set direction based off key press, create a delay in the key presses
+        if key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D:
+            direction = 3
+            title = False
+            play_screen = True
+            key_press_delay = time.time()
+
+        if key == arcade.key.C:
+            title = False
+            how_to_play = True
+            print("hi")
+
+    if how_to_play and key == arcade.key.W or key == arcade.key.A or key == arcade.key.S or key == arcade.key.D:
+        how_to_play = False
+        play_screen = True
+
+    # make it so the player can restart after they die
+    if game_over == True:
+        game_over = False
+        play_screen = True
+        for i in range(len(rsnake)):
+            grid[rsnake[i]][csnake[i]] = 0
+        rsnake.clear()
+        csnake.clear()
+        rsnake.append(4)
+        rsnake.append(4)
+        rsnake.append(4)
+        csnake.append(6)
+        csnake.append(6)
+        csnake.append(6)
         direction = 3
-        title = False
-        key_press_delay = time.time()
+        score = 0
+
     if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/100:
         direction = 1
         key_press_delay = time.time()
@@ -243,12 +283,19 @@ def on_key_press(key, modifiers):
 def setup():
     global grid, fps
     arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake")
-    arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
     arcade.schedule(on_update, 1 / fps)
     # Override arcade window methods
     window = arcade.get_window()
     window.on_draw = on_draw
     window.on_key_press = on_key_press
+
+    #create body for snake
+    rsnake.append(4)
+    rsnake.append(4)
+    rsnake.append(4)
+    csnake.append(6)
+    csnake.append(6)
+    csnake.append(6)
 
     # array is simply a list of lists.
     for row in range(ROW_COUNT+1):
