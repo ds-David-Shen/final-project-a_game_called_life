@@ -14,13 +14,14 @@ HEIGHT = 30
 
 # This sets the margin between each cell
 # and on the edges of the screen.
+# set to one to see the grid easier when testing
 MARGIN = 0
 
 # set scores
 score = 0
 high_score = 0
 
-direction = 5
+direction = 0
 
 # set if screen is chosen
 title = True
@@ -31,14 +32,17 @@ how_to_play = False
 # set frame rate
 fps = 5
 
-# create key press delay so player cannot switch direction too quickly
+# create key press delay so player cannot break the game by switching direction too quickly
 key_press_delay = time.time()
 
 # set if song is chosen
 song_chosen = False
 
 # default theme of music
-theme = "music/maintheme.mp3"
+theme = "sounds/maintheme.mp3"
+
+# for gif in game over screen(arcade does not support gifs
+game_over_image_frame = 0
 
 # create two lists to store x and y coordinates of the snake
 rsnake = []
@@ -57,6 +61,7 @@ grid = []
 
 # create music function for songs
 def sound(sound):
+    pass
     play_sound = arcade.load_sound(sound)
     arcade.play_sound(play_sound)
 
@@ -66,21 +71,38 @@ def title_screen():
     texture = arcade.load_texture("Images/snake-title-screen.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
-    arcade.draw_text("press A to start\npress C for how to play", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
+    arcade.draw_text("press A to start\npress C for how to play", SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 3, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
 
 # create end screen
-def end_Screen():
+def end_Screen(frame):
     global grid, direction, score
-    arcade.set_background_color(arcade.color.WHITE)
-    arcade.draw_text("Game over", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, arcade.color.BLACK,50, font_name= "TIMES NEW ROMAN")
-    arcade.draw_text("Your score is " + str(score)+"\n  press any key\n to play again", SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2, arcade.color.BLACK,25, font_name = "TIMES NEW ROMAN")
+    arcade.set_background_color(arcade.color.BLACK)
+
+
+    if frame < 10:
+        game_over_text = arcade.load_texture(
+            "Images/Game_over_gif/frame_0"+str(frame)+"_delay-0.11s.gif")
+    else:
+        game_over_text = arcade.load_texture(
+            "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
+    scale = 2
+    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
+                                          game_over_text.height * scale, game_over_text, 0)
+
+    # block watermark because cropping is too much work
+    arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
+    arcade.draw_text("Your score is " + str(score) + "\n press any key\n to play again", SCREEN_WIDTH / 2 - 100,
+                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 25, font_name="TIMES NEW ROMAN")
+
     direction = 0
 
 # create how to play screen
 def how_to_play_screen():
     arcade.set_background_color(arcade.color.BLACK)
-    arcade.draw_text("Use WASD keys\n to move", SCREEN_WIDTH/2 - 180, SCREEN_HEIGHT/2 + 100, arcade.color.WHITE, 50, font_name= "TIMES NEW ROMAN")
-    arcade.draw_text("press A to start", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 200, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
+    controls = arcade.load_texture("Images/controls.png")
+    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2,  SCREEN_HEIGHT / 2, controls.width,
+                                 controls.height, controls, 0)
+    arcade.draw_text("press A to start", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
 
 # update function
 def on_update(delta_time):
@@ -117,6 +139,9 @@ def on_update(delta_time):
                 # see if snake hits itself
                 for j in range(i - 1):
                     if rsnake[j] == rsnake[i] and csnake[j] == csnake[i]:
+                        if game_over == False:
+                            sound_effect = "sounds/Bonk.mp3"
+                            sound(sound_effect)
                         game_over = True
                         high_score = score
 
@@ -130,11 +155,13 @@ def on_update(delta_time):
 
         # game over if snake hits the  boundaries
         if rsnake[len(rsnake)-1] > ROW_COUNT - 1 or rsnake[len(rsnake)-1] < 0 or csnake[len(rsnake)-1] > COLUMN_COUNT - 1 or csnake[len(rsnake)-1] < 0:
-            end_Screen()
+            sound_effect = "sounds/Bonk.mp3"
+            sound(sound_effect)
             play_screen = False
             direction = 0
             game_over = True
             high_score = score
+
 
 # create bug function
 def bug():
@@ -148,14 +175,20 @@ def bug():
 
 # create draw function
 def on_draw():
-    global score, direction, game_over, how_to_play, song_chosen, play_screen
+    global score, direction, game_over, how_to_play, song_chosen, play_screen, game_over_image_frame
     arcade.start_render()
 
     # see which screen to draw
     if title:
         title_screen()
+
     elif game_over:
-        end_Screen()
+        end_Screen(game_over_image_frame)
+        game_over_image_frame += 1
+        if game_over_image_frame > 17:
+            game_over_image_frame = 0
+        time.sleep(0.11)
+
     elif how_to_play:
         how_to_play_screen()
     else:
@@ -164,6 +197,7 @@ def on_draw():
             sound(theme)
             song_chosen = True
 
+        # draw bug
         bug()
 
         # Draw the grid
@@ -229,9 +263,10 @@ def on_key_press(key, modifiers):
         # if the player does certain inputs in the beginning of the game,
         # play secret theme and double speed
         if konamicode == secret:
-            theme = "music/Motteke! Sailor Fuku! - Lucky Star Full Opening.mp3"
-            fps = 10
+            theme = "sounds/bloonsTheme.mp3"
+            fps *= 2
             schedule(fps)
+
         # set direction based off key press, create a delay in the key presses
         if key == arcade.key.A:
             direction = 3
@@ -265,19 +300,19 @@ def on_key_press(key, modifiers):
         direction = 3
         score = 0
 
-    if play_screen:
-        if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/100:
+    elif play_screen:
+        if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/80:
             direction = 1
             key_press_delay = time.time()
-        if key == arcade.key.S and direction != 0 and direction != 1 and time.time() - key_press_delay > 1/fps - fps/100:
+        if key == arcade.key.S and direction != 0 and direction != 1 and time.time() - key_press_delay > 1/fps - fps/80:
             direction = 2
             key_press_delay = time.time()
 
-        if key == arcade.key.D and direction != 0 and direction != 4 and time.time() - key_press_delay > 1/fps - fps/100:
+        if key == arcade.key.D and direction != 0 and direction != 4 and time.time() - key_press_delay > 1/fps - fps/80:
             direction = 3
             key_press_delay = time.time()
 
-        if key == arcade.key.A and direction != 0 and direction != 3 and time.time() - key_press_delay > 1/fps - fps/100:
+        if key == arcade.key.A and direction != 0 and direction != 3 and time.time() - key_press_delay > 1/fps - fps/80:
             direction = 4
             key_press_delay = time.time()
 
