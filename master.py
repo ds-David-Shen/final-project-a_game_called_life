@@ -1,3 +1,17 @@
+'''
+-------------------------------------------------------------------------------
+Name:	master.py
+Purpose:
+create a game using python arcade
+the game we created is snake (because python = snake)
+
+Author:	Shen D, Chen X
+
+Created:	13/06/2019
+Finished:   17/06/2019
+-----------------------------------------------------------------------------
+'''
+
 import arcade
 import random
 import time
