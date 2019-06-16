@@ -5,6 +5,8 @@
 The game that we have originally planned on creating this year for our computer science CPT was Bloons Tower Defense 7, an updated, modified, and better version of the Bloons TD series. After stumbling into many obstables, bugs, and being unable to overcome them after an ample amount of time, we realized we could not produce such a high quality game in so little time. As a result, we decided to move on to our backup game: Snake. 
 
 ### Gameplay Instructions
+* To play the game, run the file named master.py
+
 In this game, the character uses the WASD buttons to move the snake. The snake starts off as one block long, and the snake will continue to grow every time a bug is consumed(We used bugs because our game is probably really buggy).
 
 ### Objective of the game
