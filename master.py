@@ -72,7 +72,7 @@ def title_screen():
     texture = arcade.load_texture("Images/snake-title-screen.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
-    arcade.draw_text("press A to start\npress C for how to play", SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 3, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play", SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 15, font_name= "TIMES NEW ROMAN")
 
 # create end screen
 def end_Screen(frame):
@@ -92,8 +92,8 @@ def end_Screen(frame):
 
     # block watermark because cropping is too much work
     arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-    arcade.draw_text("Your score is " + str(score) + "\n press any key\n to play again", SCREEN_WIDTH / 2 - 100,
-                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 25, font_name="TIMES NEW ROMAN")
+    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit", SCREEN_WIDTH / 2 - 100,
+                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
     direction = 0
 
@@ -103,7 +103,7 @@ def how_to_play_screen():
     controls = arcade.load_texture("Images/controls.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2,  SCREEN_HEIGHT / 2, controls.width,
                                  controls.height, controls, 0)
-    arcade.draw_text("press A to start", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
 
 # update function
 def on_update(delta_time):
@@ -263,6 +263,11 @@ def on_key_press(key, modifiers):
 
         # if the player does certain inputs in the beginning of the game,
         # play secret theme and double speed
+
+        if key == arcade.key.V:
+            fps *= 1.5
+            schedule(fps)
+
         if konamicode == secret:
             theme = "sounds/bloonsTheme.mp3"
             fps *= 2
@@ -279,6 +284,9 @@ def on_key_press(key, modifiers):
             title = False
             how_to_play = True
 
+    if how_to_play and key == arcade.key.V:
+        fps *= 1.5
+        schedule(fps)
     if how_to_play and key == arcade.key.A:
         how_to_play = False
         play_screen = True
@@ -301,6 +309,8 @@ def on_key_press(key, modifiers):
         csnake.append(6)
         direction = 3
         score = 0
+        if key == arcade.key.SPACE:
+            quit()
 
     elif play_screen:
         if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/80:
