@@ -4,6 +4,7 @@ import time
 import os
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
+
 # Set how many rows and columns we will have
 ROW_COUNT = 20
 COLUMN_COUNT = 20
@@ -59,9 +60,9 @@ SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
 grid = []
 
+
 # create music function for songs
 def sound(sound):
-    pass
     play_sound = arcade.load_sound(sound)
     arcade.play_sound(play_sound)
 
@@ -184,10 +185,10 @@ def on_draw():
 
     elif game_over:
         end_Screen(game_over_image_frame)
-        game_over_image_frame += 1
-        if game_over_image_frame > 17:
+        if game_over_image_frame == 17:
             game_over_image_frame = 0
-        time.sleep(0.11)
+        game_over_image_frame += 1
+
 
     elif how_to_play:
         how_to_play_screen()
@@ -238,13 +239,13 @@ def on_draw():
 
 
 
-# create secret code
+# create secret code because why not
 konamicode = ['u','u','d','d','l','r','l','r','b','a']
 secret = []
 
 
 def on_key_press(key, modifiers):
-    global direction, title, play_screen, game_over, how_to_play, konamicode, secret, key_press_delay, fps, theme, score
+    global direction, title, play_screen, game_over, how_to_play, konamicode, secret, key_press_delay, fps, theme, score, game_over_image_frame
 
     if title == True:
         if key == arcade.key.UP:
@@ -285,6 +286,7 @@ def on_key_press(key, modifiers):
 
     # make it so the player can restart after they die
     if game_over == True:
+        game_over_image_frame = 0
         game_over = False
         play_screen = True
         for i in range(len(rsnake)):
