@@ -97,7 +97,8 @@ def on_update(delta_time):
         csnake.append(csnake[len(csnake)-1])
         bug_xPos = random.randint(0,COLUMN_COUNT - 1)
         bug_yPos = random.randint(0,ROW_COUNT - 1)
-        arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+        crunch = "sounds/Crunch.mp3"
+        sound(crunch)
 
     # snake movement
     if play_screen:
@@ -173,18 +174,31 @@ def on_draw():
                 y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
 
                 if grid[row][column] == 1:
-                    color = arcade.color.GREEN
+                    color = arcade.color.AMAZON
                     arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
-                    color = arcade.color.WHITE
+                    color = arcade.color.GREEN
                     arcade.draw_rectangle_outline(x, y, WIDTH, HEIGHT, color, 3)
                 elif grid[row][column] == 2:
+                    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
                     texture = arcade.load_texture("Images/bug.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
                 elif grid[row][column] == 3:
-                    texture = arcade.load_texture("Images/chibi-miku.png")
-                    arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 0)
+                    texture = arcade.load_texture("Images/Head.jpg")
+                    if direction == 1:
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 180)
+                    if direction == 2:
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture)
+                    if direction == 3:
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 90)
+                    if direction == 4:
+                            arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                          HEIGHT, texture, 270)
+
                 else:
                     texture = arcade.load_texture("Images/grassBlock.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,

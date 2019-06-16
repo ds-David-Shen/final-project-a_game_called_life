@@ -74,8 +74,9 @@ def title_screen():
                                   SCREEN_HEIGHT, texture, 0)
     arcade.draw_text("press A to start\npress C for how to play", SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 3, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
 
+
 # create end screen
-def end_Screen(frame):
+def end_screen(frame):
     global grid, direction, score
     arcade.set_background_color(arcade.color.BLACK)
 
@@ -121,12 +122,13 @@ def on_update(delta_time):
 
     # increase score when bug is reached, move bug to new location
     if grid[rsnake[len(rsnake)-1]][csnake[len(csnake)-1]] == 2:
+        crunch = "sounds/Crunch.mp3"
+        sound(crunch)
         score += 1
         rsnake.append(rsnake[len(rsnake)-1])
         csnake.append(csnake[len(csnake)-1])
         bug_xPos = random.randint(0,COLUMN_COUNT - 1)
         bug_yPos = random.randint(0,ROW_COUNT - 1)
-        arcade.set_background_color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
 
     # snake movement
     if play_screen:
@@ -184,7 +186,7 @@ def on_draw():
         title_screen()
 
     elif game_over:
-        end_Screen(game_over_image_frame)
+        end_screen(game_over_image_frame)
         if game_over_image_frame == 17:
             game_over_image_frame = 0
         game_over_image_frame += 1
@@ -211,11 +213,13 @@ def on_draw():
                 y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
 
                 if grid[row][column] == 1:
-                    color = arcade.color.GREEN
+                    color = arcade.color.AMAZON
                     arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
-                    color = arcade.color.WHITE
+                    color = arcade.color.GREEN
                     arcade.draw_rectangle_outline(x, y, WIDTH, HEIGHT, color, 3)
                 elif grid[row][column] == 2:
+                    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
                     texture = arcade.load_texture("Images/bug.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
