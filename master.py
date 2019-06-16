@@ -255,10 +255,10 @@ def on_draw():
 # create secret code because why not
 konamicode = ['u','u','d','d','l','r','l','r','b','a']
 secret = []
-
+hard_mode = False
 
 def on_key_press(key, modifiers):
-    global direction, title, play_screen, game_over, how_to_play, konamicode, secret, key_press_delay, fps, theme, score, game_over_image_frame
+    global direction, title, play_screen, game_over, how_to_play, konamicode, secret, key_press_delay, fps, theme, score, game_over_image_frame, hard_mode
 
     if title == True:
         if key == arcade.key.UP:
@@ -277,14 +277,17 @@ def on_key_press(key, modifiers):
         # if the player does certain inputs in the beginning of the game,
         # play secret theme and double speed
 
-        if key == arcade.key.V:
-            fps *= 1.5
-            schedule(fps)
+
 
         if konamicode == secret:
             theme = "sounds/bloonsTheme.mp3"
             fps *= 2
             schedule(fps)
+
+        if key == arcade.key.V and hard_mode == False:
+            fps *= 1.5
+            schedule(fps)
+            hard_mode = True
 
         # set direction based off key press, create a delay in the key presses
         if key == arcade.key.A:
