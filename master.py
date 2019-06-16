@@ -121,6 +121,8 @@ def on_update(delta_time):
 
     # increase score when bug is reached, move bug to new location
     if grid[rsnake[len(rsnake)-1]][csnake[len(csnake)-1]] == 2:
+        crunch = "sounds/Crunch.mp3"
+        sound(crunch)
         score += 1
         rsnake.append(rsnake[len(rsnake)-1])
         csnake.append(csnake[len(csnake)-1])
