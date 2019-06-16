@@ -116,7 +116,8 @@ def on_update(delta_time):
                             sound_effect = "sounds/Bonk.mp3"
                             sound(sound_effect)
                         game_over = True
-                        high_score = score
+                        if score > high_score:
+                            high_score = score
 
                 # head of snake
                 if i == len(rsnake) - 2:
@@ -133,7 +134,8 @@ def on_update(delta_time):
             play_screen = False
             direction = 0
             game_over = True
-            high_score = score
+            if score > high_score:
+                high_score = score
 
 
 # create bug function

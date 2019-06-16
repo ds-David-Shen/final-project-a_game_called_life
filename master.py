@@ -146,7 +146,8 @@ def on_update(delta_time):
                             sound_effect = "sounds/Bonk.mp3"
                             sound(sound_effect)
                         game_over = True
-                        high_score = score
+                        if score > high_score:
+                            high_score = score
 
                 # head of snake
                 if i == len(rsnake) - 2:
@@ -163,7 +164,8 @@ def on_update(delta_time):
             play_screen = False
             direction = 0
             game_over = True
-            high_score = score
+            if score > high_score:
+                high_score = score
 
 
 # create bug function
@@ -224,9 +226,20 @@ def on_draw():
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
                 elif grid[row][column] == 3:
-                    texture = arcade.load_texture("Images/chibi-miku.png")
-                    arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 0)
+                    texture = arcade.load_texture("Images/Head.jpg")
+                    if direction == 1:
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 180)
+                    if direction == 2:
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture)
+                    if direction == 3:
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 90)
+                    if direction == 4:
+                            arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                          HEIGHT, texture, 270)
+
                 else:
                     texture = arcade.load_texture("Images/grassBlock.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
