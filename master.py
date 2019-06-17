@@ -125,13 +125,20 @@ def how_to_play_screen():
 
 # update function
 def on_update(delta_time):
-    global bug_xPos, bug_yPos, score, high_score, direction, play_screen, game_over, powerup_time, invincibility
+    global bug_xPos, bug_yPos, score, high_score, direction, play_screen, game_over, invincibility_powerup_time, invincibility, doublescore, doublescore_powerup_time, powerup_time
 
-    if time.time() - powerup_time < 30:
+    if time.time() - invincibility_powerup_time < powerup_time:
         invincibility = True
     else:
-        powerup_time =  0
+        invincibility_powerup_time =  0
         invincibility = False
+
+    if time.time() - doublescore_powerup_time < powerup_time:
+        doublescore = True
+    else:
+        doublescore_powerup_time =  0
+        doublescore = False
+
     # set direction
     if direction == 1:
         rsnake[len(rsnake) - 1] += 1
@@ -146,7 +153,10 @@ def on_update(delta_time):
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 2:
         crunch = "sounds/Crunch.mp3"
         sound(crunch)
-        score += 1
+        if doublescore:
+            score += 2
+        else:
+            score += 1
         rsnake.append(rsnake[len(rsnake) - 1])
         csnake.append(csnake[len(csnake) - 1])
         bug_xPos = random.randint(0, COLUMN_COUNT - 1)
@@ -156,13 +166,28 @@ def on_update(delta_time):
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 4:
         crunch = "sounds/Crunch.mp3"
         sound(crunch)
-        score += 5
+        if doublescore:
+            score += 2
+        else:
+            score += 1
         rsnake.append(rsnake[len(rsnake) - 1])
         csnake.append(csnake[len(csnake) - 1])
         bug_xPos = random.randint(0, COLUMN_COUNT - 1)
         bug_yPos = random.randint(0, ROW_COUNT - 1)
         chance_of_powerup()
-        powerup_time = time.time()
+        invincibility_powerup_time = time.time()
+
+    if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 5:
+        crunch = "sounds/Crunch.mp3"
+        sound(crunch)
+        score += 2
+        rsnake.append(rsnake[len(rsnake) - 1])
+        csnake.append(csnake[len(csnake) - 1])
+        bug_xPos = random.randint(0, COLUMN_COUNT - 1)
+        bug_yPos = random.randint(0, ROW_COUNT - 1)
+        chance_of_powerup()
+        doublescore = True
+        doublescore_powerup_time = time.time()
 
     # snake movement
     if play_screen:
@@ -177,6 +202,7 @@ def on_update(delta_time):
                 for j in range(i - 1):
                     if rsnake[j] == rsnake[i] and csnake[j] == csnake[i] and invincibility == False:
                         if game_over == False:
+                            doublescore_powerup_time = False
                             sound_effect = "sounds/Bonk.mp3"
                             sound(sound_effect)
                         game_over = True
@@ -194,7 +220,8 @@ def on_update(delta_time):
         # game over if snake hits the  boundaries
         if rsnake[len(rsnake) - 1] > ROW_COUNT - 1 or rsnake[len(rsnake) - 1] < 0 or COLUMN_COUNT - 1 < csnake[
             len(rsnake) - 1] or csnake[len(rsnake) - 1] < 0:
-            powerup_time = 0
+            invincibility_powerup_time = 0
+            doublescore_powerup_time = 0
             sound_effect = "sounds/Bonk.mp3"
             sound(sound_effect)
             play_screen = False
@@ -204,17 +231,23 @@ def on_update(delta_time):
                 high_score = score
 
 
-# create bug function
+# for powerups
 rng = 0
 invincibility = False
-powerup_time = 0
+invincibility_powerup_time = 0
+
+doublescore = False
+doublescore_powerup_time = 0
+powerup_time = 30
 
 
+# function for powerup spawning
 def chance_of_powerup():
     global rng
-    rng = random.randint(1, 25)
+    rng = random.randint(1, 20)
 
 
+# create bug function
 def bug():
     global grid, bug_xPos, bug_yPos, rng
 
@@ -225,7 +258,8 @@ def bug():
 
     if rng == 1:
         grid[bug_xPos][bug_yPos] = 4
-
+    elif rng == 2:
+        grid[bug_xPos][bug_yPos] = 5
     else:
         grid[bug_yPos][bug_xPos] = 2
 
@@ -293,6 +327,11 @@ def on_draw():
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
 
+                elif grid[row][column] == 5:
+                    texture = arcade.load_texture("Images/double_cherry.jpg")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
+
                 else:
                     texture = arcade.load_texture("Images/grassBlock.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
@@ -312,7 +351,11 @@ def on_draw():
                                           trophy.height * scale, trophy, 0)
 
             if invincibility:
-                arcade.draw_text("Invincible: " + str(int(31 - (time.time() - powerup_time))), SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
+                arcade.draw_text("Invincible: " + str(int(31 - (time.time() - invincibility_powerup_time))), SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
+                                 arcade.color.BLACK, 18, font_name="COMIC SANS MS")
+
+            if doublescore:
+                arcade.draw_text("Double Score: " + str(int(31 - (time.time() - doublescore_powerup_time))), 20, SCREEN_HEIGHT - 150,
                                  arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
 
@@ -417,7 +460,7 @@ def on_key_press(key, modifiers):
         start_game()
 
     # set direction based on input in play screen
-    elif play_screen and time.time() - key_press_delay > 1 / fps - fps / 80:
+    elif play_screen and time.time() - key_press_delay > 1 / fps - 1 / 16:
         if key == arcade.key.W and direction != 2:
             direction = 1
             key_press_delay = time.time()
