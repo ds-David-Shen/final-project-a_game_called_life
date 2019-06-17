@@ -14,6 +14,7 @@ import arcade
 import random
 import time
 import os
+
 file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
@@ -54,7 +55,7 @@ song_chosen = False
 # default theme of music
 theme = "sounds/maintheme.mp3"
 
-# for gif in game over screen(arcade does not support gifs
+# for gif in game over screen (arcade does not support gifs)
 game_over_image_frame = 0
 
 # create two lists to store x and y coordinates of the snake
@@ -69,11 +70,10 @@ bug_yPos = random.randint(0, ROW_COUNT - 2)
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 
-
 grid = []
 
 
-# create music function for songs
+# create sound function
 def sound(sound):
     play_sound = arcade.load_sound(sound)
     arcade.play_sound(play_sound)
@@ -82,40 +82,46 @@ def sound(sound):
 # create title screen
 def title_screen():
     texture = arcade.load_texture("Images/snake-title-screen.png")
-    arcade.draw_texture_rectangle(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH,
+    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
-    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play", SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 15, font_name= "TIMES NEW ROMAN")
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play",
+                     SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE,
+                     15, font_name="TIMES NEW ROMAN")
+
 
 # create end screen
-def end_Screen(frame):
+def end_screen(frame):
     global grid, direction, score
     arcade.set_background_color(arcade.color.BLACK)
 
-
     if frame < 10:
         game_over_text = arcade.load_texture(
-            "Images/Game_over_gif/frame_0"+str(frame)+"_delay-0.11s.gif")
+            "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
     else:
         game_over_text = arcade.load_texture(
             "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
     scale = 2
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
-                                          game_over_text.height * scale, game_over_text, 0)
+                                  game_over_text.height * scale, game_over_text, 0)
 
     # block watermark because cropping is too much work
     arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit", SCREEN_WIDTH / 2 - 100,
+    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
+                     SCREEN_WIDTH / 2 - 100,
                      SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
     direction = 0
+
 
 # create how to play screen
 def how_to_play_screen():
     arcade.set_background_color(arcade.color.BLACK)
     controls = arcade.load_texture("Images/controls.png")
-    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2,  SCREEN_HEIGHT / 2, controls.width,
-                                 controls.height, controls, 0)
-    arcade.draw_text("press A for easy mode\npress V then A for hard mode", SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name= "TIMES NEW ROMAN")
+    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, controls.width,
+                                  controls.height, controls, 0)
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode", SCREEN_WIDTH / 2 - 150,
+                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name="TIMES NEW ROMAN")
+
 
 # update function
 def on_update(delta_time):
@@ -123,29 +129,29 @@ def on_update(delta_time):
 
     # set direction
     if direction == 1:
-        rsnake[len(rsnake)-1] += 1
+        rsnake[len(rsnake) - 1] += 1
     if direction == 2:
-        rsnake[len(rsnake)-1] -= 1
+        rsnake[len(rsnake) - 1] -= 1
     if direction == 3:
-        csnake[len(csnake)-1] += 1
+        csnake[len(csnake) - 1] += 1
     if direction == 4:
-        csnake[len(csnake)-1] -= 1
+        csnake[len(csnake) - 1] -= 1
 
     # increase score when bug is reached, move bug to new location
-    if grid[rsnake[len(rsnake)-1]][csnake[len(csnake)-1]] == 2:
+    if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 2:
         crunch = "sounds/Crunch.mp3"
         sound(crunch)
         score += 1
-        rsnake.append(rsnake[len(rsnake)-1])
-        csnake.append(csnake[len(csnake)-1])
-        bug_xPos = random.randint(0,COLUMN_COUNT - 1)
-        bug_yPos = random.randint(0,ROW_COUNT - 1)
+        rsnake.append(rsnake[len(rsnake) - 1])
+        csnake.append(csnake[len(csnake) - 1])
+        bug_xPos = random.randint(0, COLUMN_COUNT - 1)
+        bug_yPos = random.randint(0, ROW_COUNT - 1)
 
     # snake movement
     if play_screen:
-        for i in range(len(rsnake)- 1):
-            rsnake[i] = rsnake[i+1]
-            csnake[i] = csnake[i+1]
+        for i in range(len(rsnake) - 1):
+            rsnake[i] = rsnake[i + 1]
+            csnake[i] = csnake[i + 1]
             if i == 0:
                 grid[rsnake[i]][csnake[i]] = 0
             else:
@@ -169,7 +175,8 @@ def on_update(delta_time):
                     grid[rsnake[i]][csnake[i]] = 1
 
         # game over if snake hits the  boundaries
-        if rsnake[len(rsnake)-1] > ROW_COUNT - 1 or rsnake[len(rsnake)-1] < 0 or csnake[len(rsnake)-1] > COLUMN_COUNT - 1 or csnake[len(rsnake)-1] < 0:
+        if rsnake[len(rsnake) - 1] > ROW_COUNT - 1 or rsnake[len(rsnake) - 1] < 0 or COLUMN_COUNT - 1 < csnake[
+            len(rsnake) - 1] or csnake[len(rsnake) - 1] < 0:
             sound_effect = "sounds/Bonk.mp3"
             sound(sound_effect)
             play_screen = False
@@ -182,6 +189,7 @@ def on_update(delta_time):
 # create bug function
 def bug():
     global grid, bug_xPos, bug_yPos
+
     # make sure bug does not spawn in body of snake
     while grid[bug_yPos][bug_xPos] == 1:
         bug_xPos = random.randint(0, COLUMN_COUNT - 2)
@@ -199,11 +207,10 @@ def on_draw():
         title_screen()
 
     elif game_over:
-        end_Screen(game_over_image_frame)
+        end_screen(game_over_image_frame)
         if game_over_image_frame == 17:
             game_over_image_frame = 0
         game_over_image_frame += 1
-
 
     elif how_to_play:
         how_to_play_screen()
@@ -240,16 +247,16 @@ def on_draw():
                     texture = arcade.load_texture("Images/Head.jpg")
                     if direction == 1:
                         arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 180)
+                                                      HEIGHT, texture, 180)
                     if direction == 2:
                         arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture)
+                                                      HEIGHT, texture)
                     if direction == 3:
                         arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 90)
+                                                      HEIGHT, texture, 90)
                     if direction == 4:
-                            arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                          HEIGHT, texture, 270)
+                        arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                      HEIGHT, texture, 270)
 
                 else:
                     texture = arcade.load_texture("Images/grassBlock.png")
@@ -257,20 +264,21 @@ def on_draw():
                                                   HEIGHT, texture, 0)
 
             # draw score
-            arcade.draw_text("Score: "+str(score), 20, SCREEN_HEIGHT - 60, arcade.color.BLACK,18, font_name= "COMIC SANS MS")
+            arcade.draw_text("Score: " + str(score), 20, SCREEN_HEIGHT - 60, arcade.color.BLACK, 18,
+                             font_name="COMIC SANS MS")
             arcade.draw_text(str(high_score), 90, SCREEN_HEIGHT - 100,
-                             arcade.color.BLACK, 18, font_name= "COMIC SANS MS")
+                             arcade.color.BLACK, 18, font_name="COMIC SANS MS")
             trophy = arcade.load_texture("Images/trophy.png")
             scale = 0.4
             arcade.draw_texture_rectangle(60, SCREEN_HEIGHT - 100, trophy.width * scale,
                                           trophy.height * scale, trophy, 0)
 
 
+# switch to harder game modes
+konamicode = ['u', 'u', 'd', 'd', 'l', 'r', 'l', 'r', 'b', 'a']
+hard_mode = ['v', 'a']
+game_mode = []
 
-# create secret code because why not
-konamicode = ['u','u','d','d','l','r','l','r','b','a']
-hard_mode =['v','a']
-secret = []
 
 def start_game():
     global direction, title, play_screen, how_to_play, game_over, key_press_delay
@@ -283,37 +291,37 @@ def start_game():
 
 
 def on_key_press(key, modifiers):
-    global direction, title, play_screen, game_over, how_to_play, konamicode, hard_mode, secret, key_press_delay, fps, theme, score, game_over_image_frame
+    global direction, title, play_screen, game_over, how_to_play, konamicode, hard_mode, game_mode, key_press_delay, fps, theme, score, game_over_image_frame
 
     if title:
         if key == arcade.key.UP:
-            secret.append('u')
+            game_mode.append('u')
         elif key == arcade.key.DOWN:
-            secret.append('d')
+            game_mode.append('d')
         elif key == arcade.key.LEFT:
-            secret.append('l')
+            game_mode.append('l')
         elif key == arcade.key.RIGHT:
-            secret.append('r')
+            game_mode.append('r')
         elif key == arcade.key.B:
-            secret.append('b')
+            game_mode.append('b')
         elif key == arcade.key.A:
-            secret.append('a')
+            game_mode.append('a')
         elif key == arcade.key.V:
-            secret.append('v')
+            game_mode.append('v')
         elif key == arcade.key.C:
             title = False
             how_to_play = True
-            secret = []
+            game_mode = []
         else:
-            secret = []
+            game_mode = []
 
         # set game mode based off input
-        if secret == konamicode:
+        if game_mode == konamicode:
             theme = "sounds/bloonsTheme.mp3"
             fps *= 4
             schedule(fps)
 
-        if secret == hard_mode:
+        if game_mode == hard_mode:
             fps *= 2
             schedule(fps)
 
@@ -322,15 +330,15 @@ def on_key_press(key, modifiers):
 
     if how_to_play:
         if key == arcade.key.A:
-            secret.append('a')
+            game_mode.append('a')
         if key == arcade.key.V:
-            secret.append('v')
-        if secret == hard_mode:
+            game_mode.append('v')
+        if game_mode == hard_mode:
             fps *= 2
             schedule(fps)
 
-    if how_to_play and key == arcade.key.A:
-        start_game()
+        if key == arcade.key.A:
+            start_game()
 
     # make it so the player can restart after they die
     if game_over:
@@ -352,7 +360,8 @@ def on_key_press(key, modifiers):
         if key == arcade.key.SPACE:
             quit()
 
-    elif play_screen and time.time() - key_press_delay > 1/fps - fps/80:
+    # set direction based on input in play screen
+    elif play_screen and time.time() - key_press_delay > 1 / fps - fps / 80:
         if key == arcade.key.W and direction != 2:
             direction = 1
             key_press_delay = time.time()
@@ -391,11 +400,11 @@ def setup():
     csnake.append(6)
 
     # array is simply a list of lists.
-    for row in range(ROW_COUNT+1):
+    for row in range(ROW_COUNT + 1):
         # Add an empty array that will hold each cell
         # in this row
         grid.append([])
-        for column in range(COLUMN_COUNT+1):
+        for column in range(COLUMN_COUNT + 1):
             grid[row].append(0)  # Append a cell
 
     arcade.run()
