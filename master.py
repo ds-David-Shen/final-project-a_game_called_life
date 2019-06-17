@@ -275,8 +275,6 @@ def on_draw():
                                           trophy.height * scale, trophy, 0)
 
 
-
-
 # game modes
 konamicode = ['u', 'u', 'd', 'd', 'l', 'r', 'l', 'r', 'b', 'a']
 hard_mode = ['v', 'a']
