@@ -129,7 +129,6 @@ def on_update(delta_time):
 
     if time.time() - powerup_time < 30:
         invincibility = True
-        print(time.time() - powerup_time)
     else:
         powerup_time =  0
         invincibility = False
@@ -225,6 +224,7 @@ def bug():
 
     if rng == 1:
         grid[bug_xPos][bug_yPos] = 4
+
     else:
         grid[bug_yPos][bug_xPos] = 2
 
