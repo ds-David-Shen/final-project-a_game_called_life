@@ -215,13 +215,10 @@ def on_draw():
     elif how_to_play:
         how_to_play_screen()
     else:
-        # after the title screen, play song
+        # After the title screen, play song
         if song_chosen == False:
             sound(theme)
             song_chosen = True
-
-        # draw bug
-        bug()
 
         # Draw the grid
         for row in range(ROW_COUNT):
@@ -232,6 +229,7 @@ def on_draw():
                 x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
                 y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
 
+                # Determine what to draw on each grid
                 if grid[row][column] == 1:
                     color = arcade.color.AMAZON
                     arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
@@ -263,6 +261,9 @@ def on_draw():
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
 
+            # draw bug on grid
+            bug()
+
             # draw score
             arcade.draw_text("Score: " + str(score), 20, SCREEN_HEIGHT - 60, arcade.color.BLACK, 18,
                              font_name="COMIC SANS MS")
@@ -274,9 +275,12 @@ def on_draw():
                                           trophy.height * scale, trophy, 0)
 
 
-# switch to harder game modes
+
+
+# game modes
 konamicode = ['u', 'u', 'd', 'd', 'l', 'r', 'l', 'r', 'b', 'a']
 hard_mode = ['v', 'a']
+easy_mode = ['a']
 game_mode = []
 
 
@@ -291,7 +295,7 @@ def start_game():
 
 
 def on_key_press(key, modifiers):
-    global direction, title, play_screen, game_over, how_to_play, konamicode, hard_mode, game_mode, key_press_delay, fps, theme, score, game_over_image_frame
+    global direction, title, play_screen, game_over, how_to_play, konamicode, hard_mode, easy_mode, game_mode, key_press_delay, fps, theme, score, game_over_image_frame
 
     if title:
         if key == arcade.key.UP:
@@ -308,6 +312,8 @@ def on_key_press(key, modifiers):
             game_mode.append('a')
         elif key == arcade.key.V:
             game_mode.append('v')
+            if len(game_mode) >= 2:
+                game_mode = ['v']
         elif key == arcade.key.C:
             title = False
             how_to_play = True
@@ -320,24 +326,33 @@ def on_key_press(key, modifiers):
             theme = "sounds/bloonsTheme.mp3"
             fps *= 4
             schedule(fps)
+            start_game()
 
         if game_mode == hard_mode:
             fps *= 2
             schedule(fps)
+            start_game()
 
-        if key == arcade.key.A:
+        if game_mode == easy_mode:
             start_game()
 
     if how_to_play:
         if key == arcade.key.A:
             game_mode.append('a')
-        if key == arcade.key.V:
+        elif key == arcade.key.V:
             game_mode.append('v')
+            if len(game_mode) >= 2:
+                game_mode = ['v']
+        else:
+
+            game_mode = []
+        # set game mode based off input
         if game_mode == hard_mode:
             fps *= 2
             schedule(fps)
+            start_game()
 
-        if key == arcade.key.A:
+        if game_mode == easy_mode:
             start_game()
 
     # make it so the player can restart after they die
@@ -353,12 +368,13 @@ def on_key_press(key, modifiers):
         csnake.append(6)
         csnake.append(6)
         csnake.append(6)
-        start_game()
         score = 0
 
         # quit if space bar is pressed when game is over
         if key == arcade.key.SPACE:
             quit()
+
+        start_game()
 
     # set direction based on input in play screen
     elif play_screen and time.time() - key_press_delay > 1 / fps - fps / 80:
@@ -377,7 +393,10 @@ def on_key_press(key, modifiers):
             direction = 4
             key_press_delay = time.time()
 
+    print(game_mode)
 
+
+# create function that determines speed of game
 def schedule(fps):
     arcade.schedule(on_update, 1 / fps)
 
