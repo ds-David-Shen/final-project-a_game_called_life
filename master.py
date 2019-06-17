@@ -194,6 +194,7 @@ def on_update(delta_time):
         # game over if snake hits the  boundaries
         if rsnake[len(rsnake) - 1] > ROW_COUNT - 1 or rsnake[len(rsnake) - 1] < 0 or COLUMN_COUNT - 1 < csnake[
             len(rsnake) - 1] or csnake[len(rsnake) - 1] < 0:
+            powerup_time = 0
             sound_effect = "sounds/Bonk.mp3"
             sound(sound_effect)
             play_screen = False
