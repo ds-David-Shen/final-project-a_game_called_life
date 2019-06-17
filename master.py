@@ -323,12 +323,13 @@ def on_key_press(key, modifiers):
 
         # set game mode based off input
         if game_mode == konamicode:
-            theme = "sounds/bloonsTheme.mp3"
+            theme = "sounds/bloons_theme.mp3"
             fps *= 4
             schedule(fps)
             start_game()
 
         if game_mode == hard_mode:
+            theme = "sounds/hard_theme.mp3"
             fps *= 2
             schedule(fps)
             start_game()
@@ -392,8 +393,6 @@ def on_key_press(key, modifiers):
         if key == arcade.key.A and direction != 3:
             direction = 4
             key_press_delay = time.time()
-
-    print(game_mode)
 
 
 # create function that determines speed of game
