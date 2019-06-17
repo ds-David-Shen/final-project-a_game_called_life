@@ -94,21 +94,38 @@ def end_screen(frame):
     global grid, direction, score
     arcade.set_background_color(arcade.color.BLACK)
 
-    if frame < 10:
-        game_over_text = arcade.load_texture(
-            "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
-    else:
-        game_over_text = arcade.load_texture(
-            "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
-    scale = 2
-    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
-                                  game_over_text.height * scale, game_over_text, 0)
+    if score < 399:
+        if frame < 10:
+            game_over_text = arcade.load_texture(
+                "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
+        else:
+            game_over_text = arcade.load_texture(
+                "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
+        scale = 2
+        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
+                                    game_over_text.height * scale, game_over_text, 0)
 
     # block watermark because cropping is too much work
-    arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
-                     SCREEN_WIDTH / 2 - 100,
-                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
+        arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
+        arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
+                        SCREEN_WIDTH / 2 - 100,
+                        SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
+    elif score == 399:
+        if frame < 10:
+            game_over_text = arcade.load_texture(
+                "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
+        else:
+            game_over_text = arcade.load_texture(
+                "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
+        scale = 2
+        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
+                                      game_over_text.height * scale, game_over_text, 0)
+
+        # block watermark because cropping is too much work
+        arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
+        arcade.draw_text("Your score is 399! WOW YOU WIN!",
+                         SCREEN_WIDTH / 2 - 100,
+                         SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
     direction = 0
 
@@ -281,6 +298,7 @@ def on_draw():
 
     elif how_to_play:
         how_to_play_screen()
+
     else:
         # After the title screen, play song
         if song_chosen == False:
