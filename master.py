@@ -31,7 +31,7 @@ HEIGHT = 30
 # set to one to see the grid easier when testing
 MARGIN = 0
 
-# set scores
+# set scores and high score to start at 0
 score = 0
 high_score = 0
 
@@ -43,7 +43,7 @@ play_screen = False
 game_over = False
 how_to_play = False
 
-# set frame rate
+# set frame rate per second
 fps = 5
 
 # create key press delay so player cannot break the game by switching direction too quickly
@@ -84,7 +84,7 @@ def title_screen():
     texture = arcade.load_texture("Images/snake-title-screen.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
-    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play",
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play\npress the space bar to quit",
                      SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE,
                      15, font_name="TIMES NEW ROMAN")
 
@@ -119,7 +119,7 @@ def how_to_play_screen():
     controls = arcade.load_texture("Images/controls.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, controls.width,
                                   controls.height, controls, 0)
-    arcade.draw_text("press A for easy mode\npress V then A for hard mode", SCREEN_WIDTH / 2 - 150,
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress the space bar to quit", SCREEN_WIDTH / 2 - 150,
                      SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name="TIMES NEW ROMAN")
 
 
@@ -231,14 +231,14 @@ def on_update(delta_time):
                 high_score = score
 
 
-# for powerups
+# rng for powerup pickups
 rng = 0
 invincibility = False
 invincibility_powerup_time = 0
 
 doublescore = False
 doublescore_powerup_time = 0
-powerup_time = 30
+powerup_time = 15
 
 
 # function for powerup spawning
@@ -359,7 +359,7 @@ def on_draw():
                                  arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
 
-# game modes
+# types of game modes
 konamicode = ['u', 'u', 'd', 'd', 'l', 'r', 'l', 'r', 'b', 'a']
 hard_mode = ['v', 'a']
 easy_mode = ['a']
@@ -400,6 +400,8 @@ def on_key_press(key, modifiers):
             title = False
             how_to_play = True
             game_mode = []
+        elif key == arcade.key.SPACE:
+            quit()
         else:
             game_mode = []
 
@@ -426,8 +428,9 @@ def on_key_press(key, modifiers):
             game_mode.append('v')
             if len(game_mode) >= 2:
                 game_mode = ['v']
+        elif key == arcade.key.SPACE:
+            quit()
         else:
-
             game_mode = []
         # set game mode based off input
         if game_mode == hard_mode:
@@ -476,15 +479,18 @@ def on_key_press(key, modifiers):
             direction = 4
             key_press_delay = time.time()
 
+        if key == arcade.key.SPACE:
+            quit()
+
 
 # create function that determines speed of game
 def schedule(fps):
     arcade.schedule(on_update, 1 / fps)
 
-
+# sets up the game
 def setup():
     global grid, fps
-    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake")
+    arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake Game")
     schedule(fps)
     # Override arcade window methods
     window = arcade.get_window()
