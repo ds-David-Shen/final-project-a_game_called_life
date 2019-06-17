@@ -4,9 +4,7 @@ Name:	master.py
 Purpose:
 create a game using python arcade
 the game we created is snake (because python = snake)
-
 Author:	Shen D, Chen X
-
 Created:	13/06/2019
 Finished:   17/06/2019
 -----------------------------------------------------------------------------
@@ -274,11 +272,20 @@ konamicode = ['u','u','d','d','l','r','l','r','b','a']
 hard_mode =['v','a']
 secret = []
 
+def start_game():
+    global direction, title, play_screen, how_to_play, game_over, key_press_delay
+    direction = 3
+    title = False
+    play_screen = True
+    how_to_play = False
+    game_over = False
+    key_press_delay = time.time()
+
 
 def on_key_press(key, modifiers):
     global direction, title, play_screen, game_over, how_to_play, konamicode, hard_mode, secret, key_press_delay, fps, theme, score, game_over_image_frame
 
-    if title == True:
+    if title:
         if key == arcade.key.UP:
             secret.append('u')
         if key == arcade.key.DOWN:
@@ -297,27 +304,23 @@ def on_key_press(key, modifiers):
         # if the player does certain inputs in the beginning of the game,
         # play secret theme and double speed
 
-
-
         if secret == konamicode:
             theme = "sounds/bloonsTheme.mp3"
             fps *= 3
             schedule(fps)
 
-        if secret == hard_mode :
+        if secret == hard_mode:
             fps *= 1.5
             schedule(fps)
 
         # set direction based off key press, create a delay in the key presses
         if key == arcade.key.A:
-            direction = 3
-            title = False
-            play_screen = True
-            key_press_delay = time.time()
+            start_game()
 
         if key == arcade.key.C:
             title = False
             how_to_play = True
+            secret = []
 
     if how_to_play:
         if key == arcade.key.A:
@@ -329,15 +332,11 @@ def on_key_press(key, modifiers):
             schedule(fps)
 
     if how_to_play and key == arcade.key.A:
-        how_to_play = False
-        play_screen = True
-        direction = 3
+        start_game()
 
     # make it so the player can restart after they die
-    if game_over == True:
+    if game_over:
         game_over_image_frame = 0
-        game_over = False
-        play_screen = True
         for i in range(len(rsnake)):
             grid[rsnake[i]][csnake[i]] = 0
         rsnake.clear()
@@ -348,30 +347,31 @@ def on_key_press(key, modifiers):
         csnake.append(6)
         csnake.append(6)
         csnake.append(6)
-        direction = 3
+        start_game()
         score = 0
         if key == arcade.key.SPACE:
             quit()
 
-    elif play_screen:
-        if key == arcade.key.W and direction != 0 and direction != 2 and time.time() - key_press_delay > 1/fps - fps/80:
+    elif play_screen and time.time() - key_press_delay > 1/fps - fps/80:
+        if key == arcade.key.W and direction != 2:
             direction = 1
             key_press_delay = time.time()
-        if key == arcade.key.S and direction != 0 and direction != 1 and time.time() - key_press_delay > 1/fps - fps/80:
+        if key == arcade.key.S and direction != 1:
             direction = 2
             key_press_delay = time.time()
 
-        if key == arcade.key.D and direction != 0 and direction != 4 and time.time() - key_press_delay > 1/fps - fps/80:
+        if key == arcade.key.D and direction != 4:
             direction = 3
             key_press_delay = time.time()
 
-        if key == arcade.key.A and direction != 0 and direction != 3 and time.time() - key_press_delay > 1/fps - fps/80:
+        if key == arcade.key.A and direction != 3:
             direction = 4
             key_press_delay = time.time()
 
 
 def schedule(fps):
     arcade.schedule(on_update, 1 / fps)
+
 
 def setup():
     global grid, fps
@@ -382,7 +382,7 @@ def setup():
     window.on_draw = on_draw
     window.on_key_press = on_key_press
 
-    #create body for snake
+    # create body for snake
     rsnake.append(4)
     rsnake.append(4)
     rsnake.append(4)
