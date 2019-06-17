@@ -125,8 +125,14 @@ def how_to_play_screen():
 
 # update function
 def on_update(delta_time):
-    global bug_xPos, bug_yPos, score, high_score, direction, play_screen, game_over
+    global bug_xPos, bug_yPos, score, high_score, direction, play_screen, game_over, powerup_time, invincibility
 
+    if time.time() - powerup_time < 30:
+        invincibility = True
+        print(time.time() - powerup_time)
+    else:
+        powerup_time =  0
+        invincibility = False
     # set direction
     if direction == 1:
         rsnake[len(rsnake) - 1] += 1
@@ -146,6 +152,18 @@ def on_update(delta_time):
         csnake.append(csnake[len(csnake) - 1])
         bug_xPos = random.randint(0, COLUMN_COUNT - 1)
         bug_yPos = random.randint(0, ROW_COUNT - 1)
+        chance_of_powerup()
+
+    if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 4:
+        crunch = "sounds/Crunch.mp3"
+        sound(crunch)
+        score += 5
+        rsnake.append(rsnake[len(rsnake) - 1])
+        csnake.append(csnake[len(csnake) - 1])
+        bug_xPos = random.randint(0, COLUMN_COUNT - 1)
+        bug_yPos = random.randint(0, ROW_COUNT - 1)
+        chance_of_powerup()
+        powerup_time = time.time()
 
     # snake movement
     if play_screen:
@@ -158,7 +176,7 @@ def on_update(delta_time):
 
                 # see if snake hits itself
                 for j in range(i - 1):
-                    if rsnake[j] == rsnake[i] and csnake[j] == csnake[i]:
+                    if rsnake[j] == rsnake[i] and csnake[j] == csnake[i] and invincibility == False:
                         if game_over == False:
                             sound_effect = "sounds/Bonk.mp3"
                             sound(sound_effect)
@@ -187,19 +205,33 @@ def on_update(delta_time):
 
 
 # create bug function
+rng = 0
+invincibility = False
+powerup_time = 0
+
+
+def chance_of_powerup():
+    global rng
+    rng = random.randint(1, 25)
+
+
 def bug():
-    global grid, bug_xPos, bug_yPos
+    global grid, bug_xPos, bug_yPos, rng
 
     # make sure bug does not spawn in body of snake
     while grid[bug_yPos][bug_xPos] == 1:
         bug_xPos = random.randint(0, COLUMN_COUNT - 2)
         bug_yPos = random.randint(0, ROW_COUNT - 2)
-    grid[bug_yPos][bug_xPos] = 2
+
+    if rng == 1:
+        grid[bug_xPos][bug_yPos] = 4
+    else:
+        grid[bug_yPos][bug_xPos] = 2
 
 
 # create draw function
 def on_draw():
-    global score, direction, game_over, how_to_play, song_chosen, play_screen, game_over_image_frame
+    global score, direction, game_over, how_to_play, song_chosen, play_screen, game_over_image_frame, invincibility
     arcade.start_render()
 
     # see which screen to draw
@@ -255,6 +287,10 @@ def on_draw():
                     if direction == 4:
                         arcade.draw_texture_rectangle(x, y, WIDTH,
                                                       HEIGHT, texture, 270)
+                elif grid[row][column] == 4:
+                    texture = arcade.load_texture("Images/minecraft_golden_apple.png")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
 
                 else:
                     texture = arcade.load_texture("Images/grassBlock.png")
@@ -273,6 +309,10 @@ def on_draw():
             scale = 0.4
             arcade.draw_texture_rectangle(60, SCREEN_HEIGHT - 100, trophy.width * scale,
                                           trophy.height * scale, trophy, 0)
+
+            if invincibility:
+                arcade.draw_text("Invincible: " + str(int(31 - (time.time() - powerup_time))), SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
+                                 arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
 
 # game modes
