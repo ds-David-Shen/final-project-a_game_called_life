@@ -288,39 +288,37 @@ def on_key_press(key, modifiers):
     if title:
         if key == arcade.key.UP:
             secret.append('u')
-        if key == arcade.key.DOWN:
+        elif key == arcade.key.DOWN:
             secret.append('d')
-        if key == arcade.key.LEFT:
+        elif key == arcade.key.LEFT:
             secret.append('l')
-        if key == arcade.key.RIGHT:
+        elif key == arcade.key.RIGHT:
             secret.append('r')
-        if key == arcade.key.B:
+        elif key == arcade.key.B:
             secret.append('b')
-        if key == arcade.key.A:
+        elif key == arcade.key.A:
             secret.append('a')
-        if key == arcade.key.V:
+        elif key == arcade.key.V:
             secret.append('v')
-
-        # if the player does certain inputs in the beginning of the game,
-        # play secret theme and double speed
-
-        if secret == konamicode:
-            theme = "sounds/bloonsTheme.mp3"
-            fps *= 3
-            schedule(fps)
-
-        if secret == hard_mode:
-            fps *= 1.5
-            schedule(fps)
-
-        # set direction based off key press, create a delay in the key presses
-        if key == arcade.key.A:
-            start_game()
-
-        if key == arcade.key.C:
+        elif key == arcade.key.C:
             title = False
             how_to_play = True
             secret = []
+        else:
+            secret = []
+
+        # set game mode based off input
+        if secret == konamicode:
+            theme = "sounds/bloonsTheme.mp3"
+            fps *= 4
+            schedule(fps)
+
+        if secret == hard_mode:
+            fps *= 2
+            schedule(fps)
+
+        if key == arcade.key.A:
+            start_game()
 
     if how_to_play:
         if key == arcade.key.A:
@@ -328,7 +326,7 @@ def on_key_press(key, modifiers):
         if key == arcade.key.V:
             secret.append('v')
         if secret == hard_mode:
-            fps *= 1.5
+            fps *= 2
             schedule(fps)
 
     if how_to_play and key == arcade.key.A:
@@ -349,6 +347,8 @@ def on_key_press(key, modifiers):
         csnake.append(6)
         start_game()
         score = 0
+
+        # quit if space bar is pressed when game is over
         if key == arcade.key.SPACE:
             quit()
 
