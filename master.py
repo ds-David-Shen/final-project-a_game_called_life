@@ -85,7 +85,7 @@ def title_screen():
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
     arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play\npress the space bar to quit",
-                     SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE,
+                     SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 3, arcade.color.WHITE,
                      15, font_name="TIMES NEW ROMAN")
 
 
@@ -94,38 +94,37 @@ def end_screen(frame):
     global grid, direction, score
     arcade.set_background_color(arcade.color.BLACK)
 
-    if score < 399:
-        if frame < 10:
-            game_over_text = arcade.load_texture(
-                "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
-        else:
-            game_over_text = arcade.load_texture(
-                "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
-        scale = 2
-        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
-                                    game_over_text.height * scale, game_over_text, 0)
+    if frame < 10:
+        game_over_text = arcade.load_texture(
+            "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
+    else:
+        game_over_text = arcade.load_texture(
+            "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
+    scale = 2
+    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
+                                game_over_text.height * scale, game_over_text, 0)
 
     # block watermark because cropping is too much work
-        arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-        arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
-                        SCREEN_WIDTH / 2 - 100,
-                        SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
-    elif score == 399:
-        if frame < 10:
-            game_over_text = arcade.load_texture(
-                "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
-        else:
-            game_over_text = arcade.load_texture(
-                "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
-        scale = 2
-        arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
-                                      game_over_text.height * scale, game_over_text, 0)
+    arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
+    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
+                    SCREEN_WIDTH / 2 - 100,
+                    SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
-        # block watermark because cropping is too much work
-        arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-        arcade.draw_text("Your score is 399! WOW YOU WIN!",
-                         SCREEN_WIDTH / 2 - 100,
-                         SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
+    if frame < 10:
+        game_over_text = arcade.load_texture(
+            "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
+    else:
+        game_over_text = arcade.load_texture(
+            "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
+    scale = 2
+    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
+                                  game_over_text.height * scale, game_over_text, 0)
+
+    # block watermark because cropping is too much work
+    arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
+    arcade.draw_text("Your score is 399! WOW YOU WIN!",
+                     SCREEN_WIDTH / 2 - 100,
+                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
     direction = 0
 
@@ -137,7 +136,7 @@ def how_to_play_screen():
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, controls.width,
                                   controls.height, controls, 0)
     arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress the space bar to quit", SCREEN_WIDTH / 2 - 150,
-                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 25, font_name="TIMES NEW ROMAN")
+                     SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
 
 # update function
@@ -168,8 +167,8 @@ def on_update(delta_time):
 
     # increase score when bug is reached, move bug to new location
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 2:
-        crunch = "sounds/Crunch.mp3"
-        sound(crunch)
+        item_sound = "sounds/Crunch.mp3"
+        sound(item_sound)
         if doublescore:
             score += 2
         else:
@@ -181,8 +180,8 @@ def on_update(delta_time):
         chance_of_powerup()
 
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 4:
-        crunch = "sounds/Crunch.mp3"
-        sound(crunch)
+        item_sound = "sounds/invincibility_sound_effect.mp3"
+        sound(item_sound)
         if doublescore:
             score += 2
         else:
@@ -195,8 +194,8 @@ def on_update(delta_time):
         invincibility_powerup_time = time.time()
 
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 5:
-        crunch = "sounds/Crunch.mp3"
-        sound(crunch)
+        item_sound = "sounds/doublescore_sound_effect.mp3"
+        sound(item_sound)
         score += 2
         rsnake.append(rsnake[len(rsnake) - 1])
         csnake.append(csnake[len(csnake) - 1])
@@ -369,11 +368,11 @@ def on_draw():
                                           trophy.height * scale, trophy, 0)
 
             if invincibility:
-                arcade.draw_text("Invincible: " + str(int(31 - (time.time() - invincibility_powerup_time))), SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
+                arcade.draw_text("Invincible: " + str(int(powerup_time + 1 - (time.time() - invincibility_powerup_time))), SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
                                  arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
             if doublescore:
-                arcade.draw_text("Double Score: " + str(int(31 - (time.time() - doublescore_powerup_time))), 20, SCREEN_HEIGHT - 150,
+                arcade.draw_text("Double Score: " + str(int(powerup_time + 1 - (time.time() - doublescore_powerup_time))), 20, SCREEN_HEIGHT - 150,
                                  arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
 
@@ -433,7 +432,7 @@ def on_key_press(key, modifiers):
         if game_mode == hard_mode:
             theme = "sounds/hard_theme.mp3"
             fps *= 2
-            schedule(fps)
+
             start_game()
 
         if game_mode == easy_mode:
@@ -481,7 +480,7 @@ def on_key_press(key, modifiers):
         start_game()
 
     # set direction based on input in play screen
-    elif play_screen and time.time() - key_press_delay > 1 / fps - 1 / 16:
+    elif play_screen and time.time() - key_press_delay > 1 / (1.45 *fps) :
         if key == arcade.key.W and direction != 2:
             direction = 1
             key_press_delay = time.time()
