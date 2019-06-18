@@ -14,7 +14,7 @@ In this game, the character uses the WASD buttons to move the snake. The snake s
 
 
 ### Scoring
-The player starts off with a score of zero, and the score increases by one every time a bug is consumed by the snake. The score can also be calculated by the length of snake minus one. 
+The player starts off with a score of zero, and the score increases by one every time a bug is consumed by the snake. The player also will get powerups in the game, such as the double score power up, where the score is doubled, and the invincibility powerup, where the snake will be able to go through itself.
 
 ## Screen Mockups
 ![snake](https://user-images.githubusercontent.com/48130577/59555200-ea3b9200-8f7c-11e9-9193-c453c9c7efad.jpg)
