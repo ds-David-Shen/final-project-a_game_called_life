@@ -19,8 +19,8 @@ file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
 # Set how many rows and columns we will have
-ROW_COUNT = 10
-COLUMN_COUNT = 10
+ROW_COUNT = 20
+COLUMN_COUNT = 20
 
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 30
@@ -247,7 +247,7 @@ powerup_time = 15
 # function for powerup spawning
 def chance_of_powerup():
     global rng_number
-    rng_number = random.randint(1, 2)
+    rng_number = random.randint(1, 20)
 
 
 # create item function
@@ -308,6 +308,10 @@ def on_draw():
                 x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
                 y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
 
+                # draw grass block
+                texture = arcade.load_texture("Images/grassBlock.png")
+                arcade.draw_texture_rectangle(x, y, WIDTH,
+                                              HEIGHT, texture, 0)
                 # Determine what to draw on each grid
                 if grid[row][column] == 1:
                     # set colour of snake based off powerup state
@@ -321,8 +325,6 @@ def on_draw():
                         snake_colour(x, y, arcade.color.AMAZON, arcade.color.GREEN)
 
                 elif grid[row][column] == 2:
-                    color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
                     texture = arcade.load_texture("Images/bug.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
@@ -341,26 +343,12 @@ def on_draw():
                         arcade.draw_texture_rectangle(x, y, WIDTH,
                                                       HEIGHT, texture, 270)
                 elif grid[row][column] == 4:
-                    texture = arcade.load_texture("Images/grassBlock.png")
-                    arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 0)
-
                     texture = arcade.load_texture("Images/enchanted_golden_apple.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
 
                 elif grid[row][column] == 5:
-                    texture = arcade.load_texture("Images/grassBlock.png")
-                    arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 0)
-
                     texture = arcade.load_texture("Images/golden_apple.png")
-                    arcade.draw_texture_rectangle(x, y, WIDTH,
-                                                  HEIGHT, texture, 0)
-
-
-                else:
-                    texture = arcade.load_texture("Images/grassBlock.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
 
@@ -446,7 +434,7 @@ def on_key_press(key, modifiers):
         if game_mode == hard_mode:
             theme = "sounds/hard_theme.mp3"
             fps *= 2
-
+            schedule(fps)
             start_game()
 
         if game_mode == easy_mode:
