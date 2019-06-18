@@ -19,8 +19,8 @@ file_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(file_path)
 
 # Set how many rows and columns we will have
-ROW_COUNT = 20
-COLUMN_COUNT = 20
+ROW_COUNT = 10
+COLUMN_COUNT = 10
 
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 30
@@ -62,9 +62,9 @@ game_over_image_frame = 0
 rsnake = []
 csnake = []
 
-# set position of bug
-bug_xPos = random.randint(0, COLUMN_COUNT - 2)
-bug_yPos = random.randint(0, ROW_COUNT - 2)
+# set position of item
+item_xPos = random.randint(0, COLUMN_COUNT - 2)
+item_yPos = random.randint(0, ROW_COUNT - 2)
 
 # Do the math to figure out screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -84,31 +84,16 @@ def title_screen():
     texture = arcade.load_texture("Images/snake-title-screen.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH,
                                   SCREEN_HEIGHT, texture, 0)
-    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress C for how to play\npress the space bar to quit",
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode"
+                     "\npress C for how to play\npress the space bar to quit",
                      SCREEN_WIDTH / 2 - SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 3, arcade.color.WHITE,
                      15, font_name="TIMES NEW ROMAN")
 
 
 # create end screen
 def end_screen(frame):
-    global grid, direction, score
+    global direction, score
     arcade.set_background_color(arcade.color.BLACK)
-
-    if frame < 10:
-        game_over_text = arcade.load_texture(
-            "Images/Game_over_gif/frame_0" + str(frame) + "_delay-0.11s.gif")
-    else:
-        game_over_text = arcade.load_texture(
-            "Images/Game_over_gif/frame_" + str(frame) + "_delay-0.11s.gif")
-    scale = 2
-    arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, game_over_text.width * scale,
-                                game_over_text.height * scale, game_over_text, 0)
-
-    # block watermark because cropping is too much work
-    arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
-                    SCREEN_WIDTH / 2 - 100,
-                    SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
     if frame < 10:
         game_over_text = arcade.load_texture(
@@ -122,7 +107,7 @@ def end_screen(frame):
 
     # block watermark because cropping is too much work
     arcade.draw_rectangle_filled(540, 136, 140, 20, arcade.color.BLACK)
-    arcade.draw_text("Your score is 399! WOW YOU WIN!",
+    arcade.draw_text("Your score is " + str(score) + "\npress any key to play again\npress the space bar to quit",
                      SCREEN_WIDTH / 2 - 100,
                      SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 4, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
@@ -135,25 +120,26 @@ def how_to_play_screen():
     controls = arcade.load_texture("Images/controls.png")
     arcade.draw_texture_rectangle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, controls.width,
                                   controls.height, controls, 0)
-    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress the space bar to quit", SCREEN_WIDTH / 2 - 150,
+    arcade.draw_text("press A for easy mode\npress V then A for hard mode\npress the space bar to quit",
+                     SCREEN_WIDTH / 2 - 150,
                      SCREEN_HEIGHT / 2 - SCREEN_HEIGHT / 2.5, arcade.color.WHITE, 15, font_name="TIMES NEW ROMAN")
 
 
 # update function
 def on_update(delta_time):
-    global bug_xPos, bug_yPos, score, high_score, direction, play_screen, game_over, invincibility_powerup_time, invincibility, doublescore, doublescore_powerup_time, powerup_time
+    global item_xPos, item_yPos, score, high_score, direction, play_screen, game_over, invincibility_powerup_time, invincibility, double_score, double_score_powerup_time, powerup_time
 
     if time.time() - invincibility_powerup_time < powerup_time:
         invincibility = True
     else:
-        invincibility_powerup_time =  0
+        invincibility_powerup_time = 0
         invincibility = False
 
-    if time.time() - doublescore_powerup_time < powerup_time:
-        doublescore = True
+    if time.time() - double_score_powerup_time < powerup_time:
+        double_score = True
     else:
-        doublescore_powerup_time =  0
-        doublescore = False
+        double_score_powerup_time = 0
+        double_score = False
 
     # set direction
     if direction == 1:
@@ -165,45 +151,45 @@ def on_update(delta_time):
     if direction == 4:
         csnake[len(csnake) - 1] -= 1
 
-    # increase score when bug is reached, move bug to new location
+    # increase score when item is reached, move item to new location
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 2:
         item_sound = "sounds/Crunch.mp3"
         sound(item_sound)
-        if doublescore:
+        if double_score:
             score += 2
         else:
             score += 1
         rsnake.append(rsnake[len(rsnake) - 1])
         csnake.append(csnake[len(csnake) - 1])
-        bug_xPos = random.randint(0, COLUMN_COUNT - 1)
-        bug_yPos = random.randint(0, ROW_COUNT - 1)
+        item_xPos = random.randint(0, COLUMN_COUNT - 1)
+        item_yPos = random.randint(0, ROW_COUNT - 1)
         chance_of_powerup()
 
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 4:
         item_sound = "sounds/invincibility_sound_effect.mp3"
         sound(item_sound)
-        if doublescore:
+        if double_score:
             score += 2
         else:
             score += 1
         rsnake.append(rsnake[len(rsnake) - 1])
         csnake.append(csnake[len(csnake) - 1])
-        bug_xPos = random.randint(0, COLUMN_COUNT - 1)
-        bug_yPos = random.randint(0, ROW_COUNT - 1)
+        item_xPos = random.randint(0, COLUMN_COUNT - 1)
+        item_yPos = random.randint(0, ROW_COUNT - 1)
         chance_of_powerup()
         invincibility_powerup_time = time.time()
 
     if grid[rsnake[len(rsnake) - 1]][csnake[len(csnake) - 1]] == 5:
-        item_sound = "sounds/doublescore_sound_effect.mp3"
+        item_sound = "sounds/double_score_sound_effect.mp3"
         sound(item_sound)
         score += 2
         rsnake.append(rsnake[len(rsnake) - 1])
         csnake.append(csnake[len(csnake) - 1])
-        bug_xPos = random.randint(0, COLUMN_COUNT - 1)
-        bug_yPos = random.randint(0, ROW_COUNT - 1)
+        item_xPos = random.randint(0, COLUMN_COUNT - 1)
+        item_yPos = random.randint(0, ROW_COUNT - 1)
         chance_of_powerup()
-        doublescore = True
-        doublescore_powerup_time = time.time()
+        double_score = True
+        double_score_powerup_time = time.time()
 
     # snake movement
     if play_screen:
@@ -218,7 +204,7 @@ def on_update(delta_time):
                 for j in range(i - 1):
                     if rsnake[j] == rsnake[i] and csnake[j] == csnake[i] and invincibility == False:
                         if game_over == False:
-                            doublescore_powerup_time = False
+                            double_score_powerup_time = False
                             sound_effect = "sounds/Bonk.mp3"
                             sound(sound_effect)
                         game_over = True
@@ -237,7 +223,7 @@ def on_update(delta_time):
         if rsnake[len(rsnake) - 1] > ROW_COUNT - 1 or rsnake[len(rsnake) - 1] < 0 or COLUMN_COUNT - 1 < csnake[
             len(rsnake) - 1] or csnake[len(rsnake) - 1] < 0:
             invincibility_powerup_time = 0
-            doublescore_powerup_time = 0
+            double_score_powerup_time = 0
             sound_effect = "sounds/Bonk.mp3"
             sound(sound_effect)
             play_screen = False
@@ -247,37 +233,46 @@ def on_update(delta_time):
                 high_score = score
 
 
-# rng for powerup pickups
-rng = 0
+# rng_number for powerup pickups
+# set rng_number as a number that won't make the first item a powerup
+rng_number = 0
 invincibility = False
 invincibility_powerup_time = 0
 
-doublescore = False
-doublescore_powerup_time = 0
+double_score = False
+double_score_powerup_time = 0
 powerup_time = 15
 
 
 # function for powerup spawning
 def chance_of_powerup():
-    global rng
-    rng = random.randint(1, 20)
+    global rng_number
+    rng_number = random.randint(1, 2)
 
 
-# create bug function
-def bug():
-    global grid, bug_xPos, bug_yPos, rng
+# create item function
+def item():
+    global grid, item_xPos, item_yPos, rng_number
 
-    # make sure bug does not spawn in body of snake
-    while grid[bug_yPos][bug_xPos] == 1:
-        bug_xPos = random.randint(0, COLUMN_COUNT - 2)
-        bug_yPos = random.randint(0, ROW_COUNT - 2)
+    # make sure item does not spawn in body of snake
+    while grid[item_yPos][item_xPos] == 1:
+        item_xPos = random.randint(0, COLUMN_COUNT - 2)
+        item_yPos = random.randint(0, ROW_COUNT - 2)
 
-    if rng == 1:
-        grid[bug_xPos][bug_yPos] = 4
-    elif rng == 2:
-        grid[bug_xPos][bug_yPos] = 5
+    if rng_number == 1:
+        grid[item_xPos][item_yPos] = 4
+    elif rng_number == 2:
+        grid[item_xPos][item_yPos] = 5
     else:
-        grid[bug_yPos][bug_xPos] = 2
+        grid[item_yPos][item_xPos] = 2
+
+
+# create snake_colour function
+def snake_colour(x, y, body, body_outline):
+    color = body
+    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
+    color = body_outline
+    arcade.draw_rectangle_outline(x, y, WIDTH, HEIGHT, color, 3)
 
 
 # create draw function
@@ -315,10 +310,16 @@ def on_draw():
 
                 # Determine what to draw on each grid
                 if grid[row][column] == 1:
-                    color = arcade.color.AMAZON
-                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
-                    color = arcade.color.GREEN
-                    arcade.draw_rectangle_outline(x, y, WIDTH, HEIGHT, color, 3)
+                    # set colour of snake based off powerup state
+                    if invincibility:
+                        snake_colour(x, y, arcade.color.GOLDEN_BROWN, arcade.color.GOLD)
+
+                    elif double_score:
+                        snake_colour(x, y, arcade.color.DARK_CYAN, arcade.color.SKY_BLUE)
+
+                    else:
+                        snake_colour(x, y, arcade.color.AMAZON, arcade.color.GREEN)
+
                 elif grid[row][column] == 2:
                     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
                     arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
@@ -340,22 +341,31 @@ def on_draw():
                         arcade.draw_texture_rectangle(x, y, WIDTH,
                                                       HEIGHT, texture, 270)
                 elif grid[row][column] == 4:
-                    texture = arcade.load_texture("Images/minecraft_golden_apple.png")
+                    texture = arcade.load_texture("Images/grassBlock.png")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
+
+                    texture = arcade.load_texture("Images/enchanted_golden_apple.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
 
                 elif grid[row][column] == 5:
-                    texture = arcade.load_texture("Images/double_cherry.jpg")
+                    texture = arcade.load_texture("Images/grassBlock.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
+
+                    texture = arcade.load_texture("Images/golden_apple.png")
+                    arcade.draw_texture_rectangle(x, y, WIDTH,
+                                                  HEIGHT, texture, 0)
+
 
                 else:
                     texture = arcade.load_texture("Images/grassBlock.png")
                     arcade.draw_texture_rectangle(x, y, WIDTH,
                                                   HEIGHT, texture, 0)
 
-            # draw bug on grid
-            bug()
+            # draw item on grid
+            item()
 
             # draw score
             arcade.draw_text("Score: " + str(score), 20, SCREEN_HEIGHT - 60, arcade.color.BLACK, 18,
@@ -368,12 +378,16 @@ def on_draw():
                                           trophy.height * scale, trophy, 0)
 
             if invincibility:
-                arcade.draw_text("Invincible: " + str(int(powerup_time + 1 - (time.time() - invincibility_powerup_time))), SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
-                                 arcade.color.BLACK, 18, font_name="COMIC SANS MS")
+                arcade.draw_text(
+                    "Invincible: " + str(int(powerup_time + 1 - (time.time() - invincibility_powerup_time))),
+                    SCREEN_WIDTH / 2, SCREEN_HEIGHT - 60,
+                    arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
-            if doublescore:
-                arcade.draw_text("Double Score: " + str(int(powerup_time + 1 - (time.time() - doublescore_powerup_time))), 20, SCREEN_HEIGHT - 150,
-                                 arcade.color.BLACK, 18, font_name="COMIC SANS MS")
+            if double_score:
+                arcade.draw_text(
+                    "Double Score: " + str(int(powerup_time + 1 - (time.time() - double_score_powerup_time))), 20,
+                    SCREEN_HEIGHT - 150,
+                    arcade.color.BLACK, 18, font_name="COMIC SANS MS")
 
 
 # types of game modes
@@ -480,7 +494,7 @@ def on_key_press(key, modifiers):
         start_game()
 
     # set direction based on input in play screen
-    elif play_screen and time.time() - key_press_delay > 1 / (1.45 *fps) :
+    elif play_screen and time.time() - key_press_delay > 1 / (1.45 * fps):
         if key == arcade.key.W and direction != 2:
             direction = 1
             key_press_delay = time.time()
@@ -503,6 +517,7 @@ def on_key_press(key, modifiers):
 # create function that determines speed of game
 def schedule(fps):
     arcade.schedule(on_update, 1 / fps)
+
 
 # sets up the game
 def setup():
