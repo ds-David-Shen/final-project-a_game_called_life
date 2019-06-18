@@ -63,8 +63,8 @@ rsnake = []
 csnake = []
 
 # set position of item
-item_xPos = random.randint(0, COLUMN_COUNT - 2)
-item_yPos = random.randint(0, ROW_COUNT - 2)
+item_xPos = random.randint(0, COLUMN_COUNT - 1)
+item_yPos = random.randint(0, ROW_COUNT - 1)
 
 # Do the math to figure out screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -212,7 +212,7 @@ def on_update(delta_time):
                             high_score = score
 
                 # head of snake
-                if i == len(rsnake) - 2:
+                if i == len(rsnake) - 1:
                     grid[rsnake[i]][csnake[i]] = 3
 
                 # body of snake
@@ -256,8 +256,8 @@ def item():
 
     # make sure item does not spawn in body of snake
     while grid[item_yPos][item_xPos] == 1:
-        item_xPos = random.randint(0, COLUMN_COUNT - 2)
-        item_yPos = random.randint(0, ROW_COUNT - 2)
+        item_xPos = random.randint(0, COLUMN_COUNT - 1)
+        item_yPos = random.randint(0, ROW_COUNT - 1)
 
     if rng_number == 1:
         grid[item_xPos][item_yPos] = 4
