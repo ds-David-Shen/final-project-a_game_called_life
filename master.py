@@ -212,7 +212,7 @@ def on_update(delta_time):
                             high_score = score
 
                 # head of snake
-                if i == len(rsnake) - 1:
+                if i == len(rsnake) - 2:
                     grid[rsnake[i]][csnake[i]] = 3
 
                 # body of snake
