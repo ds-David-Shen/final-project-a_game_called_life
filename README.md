@@ -1,5 +1,6 @@
 # Final Project Details
 
+This is a game that was created for my final project in grade 11 comp sci using the python arcade library
 ## CODE EXPLANATION
 
 The game that we have originally planned on creating this year for our computer science CPT was Bloons Tower Defense 7, an updated, modified, and better version of the Bloons TD series. After stumbling into many obstables, bugs, and being unable to overcome them after an ample amount of time, we realized we could not produce such a high quality game in so little time. As a result, we decided to move on to our backup game: Snake. 
